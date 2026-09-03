@@ -188,7 +188,7 @@ ProcessBench 的题目来源本身构成一条难度阶梯，直接作为分层�
 ### 9.1 安装
 
 ```bash
-git clone https://github.com/OF12138/stepprobe.git
+git clone https://github.com/OF12138/StepProbe.git
 cd stepprobe
 pip install -r requirements.txt
 ```
