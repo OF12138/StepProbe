@@ -189,9 +189,13 @@ ProcessBench 的题目来源本身构成一条难度阶梯，直接作为分层�
 
 ```bash
 git clone https://github.com/OF12138/StepProbe.git
-cd stepprobe
-pip install -r requirements.txt
+cd StepProbe
+pip install -e .          # 以包方式安装，MCP Server 才能从任意工作目录启动
+pip install mcp           # MCP 依赖（可选：仅接入 WorkBuddy 时需要）
 ```
+
+> 必须用 `pip install -e .` 而非只装 `requirements.txt`。WorkBuddy 启动 MCP Server
+> 时的工作目录不确定，装成包才能保证 `python -m stepprobe.mcp_server` 在任何目录下都能跑起来。
 
 ### 9.2 拉取并规整评测数据
 
@@ -215,13 +219,17 @@ python -m stepprobe.data.build --config configs/default.yaml
       "command": "python",
       "args": ["-m", "stepprobe.mcp_server"],
       "env": {
-        "STEPPROBE_DATA_DIR": "./data",
-        "STEPPROBE_RESULTS_DIR": "./results"
+        "STEPPROBE_DATA_DIR": "F:/Code/HYLLM/stepprobe/data",
+        "STEPPROBE_RESULTS_DIR": "F:/Code/HYLLM/stepprobe/results"
       }
     }
   }
 }
 ```
+
+> **路径必须写绝对路径。** WorkBuddy 启动 MCP Server 时的工作目录不确定，
+> 写 `./data` 会导致找不到数据文件而报错。仓库里 `.workbuddy/mcp.json.example`
+> 是模板，改成你自己的绝对路径后使用。
 
 在 WorkBuddy 中：**侧边栏「插件」→ 右上角「MCP 服务器」→「配置 MCP」**，粘贴上述配置。
 
@@ -308,20 +316,21 @@ stepprobe/
 
 ## 12. 项目状态
 
-> **当前处于设计完成阶段，代码尚未实现。** 下表为实现进度。
+> **代码部分（P1–P4）已全部实现并通过 123 项测试。** 后续阶段需要在 WorkBuddy 界面中人工发起。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)。
 
 | 模块 | 状态 |
 |---|---|
 | 方案设计与错误分类体系 | ✅ 已完成 |
 | 数据说明与抽样方案 | ✅ 已完成 |
 | 评估方法与提示词设计 | ✅ 已完成 |
-| 数据管线 | ⬜ 未开始 |
-| MCP Server 骨架 | ⬜ 未开始 |
-| L1 确定性校验工具 | ⬜ 未开始 |
-| solve / evaluate / validate Skills | ⬜ 未开始 |
-| 有效性验证实验 | ⬜ 未开始 |
-| 完整评测与分析报告 | ⬜ 未开始 |
-| Demo 视频 / GIF | ⬜ 未开始 |
+| 数据管线（P1） | ✅ 已完成 |
+| L1 确定性校验器（P2） | ✅ 已完成，实测误报率 3.6% |
+| MCP Server（P3，8 个工具） | ✅ 已完成 |
+| solve / evaluate / validate Skills | ✅ 已写完，待接入 WorkBuddy |
+| 有效性验证实验（P5） | ⬜ 待人工在 WorkBuddy 中发起 |
+| 完整评测与 Max Mode 消融（P6） | ⬜ 待人工发起 |
+| 人工抽检（P7） | ⬜ 待人工确认 |
+| 分析报告与 Demo（P8） | ⬜ 未开始 |
 
 ---
 
