@@ -11,8 +11,8 @@
 | **P0** | 方案设计、错误分类体系、数据方案 | Claude | ✅ 完成 |
 | **P1** | 数据管线：拉取、规整、分层抽样 | Claude | ✅ 完成 |
 | **P2** | L1 确定性校验器（答案 / 等式 / 格式）+ 单元测试 | Claude | ✅ 完成 |
-| **P3** | MCP Server：工具注册与 stdio 服务 | Claude | ⬜ |
-| **P4** | Skills 落地 + WorkBuddy 联调 | Claude 写，**人工接入** | ⬜ |
+| **P3** | MCP Server：工具注册与 stdio 服务 | Claude | ✅ 完成 |
+| **P4** | Skills 落地 + WorkBuddy 联调 | Claude 写完 ✅，**待人工接入** | 🟡 |
 | **P5** | 有效性验证实验 | **人工发起**，Claude 分析 | ⬜ |
 | **P6** | 评测执行 + Max Mode 消融 | **人工发起**，Claude 分析 | ⬜ |
 | **P7** | 人工抽检（Claude 预审 + 人工确认） | Claude 预审，**人工确认** | ⬜ |
@@ -67,9 +67,9 @@
 
 | 原文 | 剥掉后 | 判定 | 实际 |
 |---|---|---|---|
-| `arphi(41) = 41 - 1` | `(41) = 40` | FALSE | φ(41)=40 ✓ |
-| `inom{40}{17} = inom{40}{23}` | `(40)(17) = (40)(23)` | FALSE | 组合数相等 ✓ |
-| `f(2) = 8 + 6 = 14 	ag{7}` | `14 * 7` | FALSE | ✓ |
+| `\varphi(41) = 41 - 1` | `(41) = 40` | FALSE | φ(41)=40 ✓ |
+| `\binom{40}{17} = \binom{40}{23}` | `(40)(17) = (40)(23)` | FALSE | 组合数相等 ✓ |
+| `f(2) = 8 + 6 = 14 \tag{7}` | `14 * 7` | FALSE | ✓ |
 | `\[71+72=143\] \[143+73=216\]` | 跨块拼成假等式 | FALSE | ✓ |
 
 修复分四步，每一步都由实测数据驱动：
@@ -89,11 +89,34 @@
 的可靠性 —— 确定性方法同样会因为实现缺陷而系统性出错，而且因为它看起来
 「确定」，这类错误反而更不容易被怀疑。
 
-### P3 MCP Server
+### P3 MCP Server ✅
 
-- stdio 传输，注册 7 个工具（README §3）
-- `dataset.next_batch()` **必须剥离 `label` 字段** —— 防止评估时泄漏 ground truth
-- 全部工具写单元测试，Claude 自测通过后再交付
+stdio 传输，注册 8 个工具：
+
+| 工具 | 作用 |
+|---|---|
+| `dataset_next_batch` | 取样本，**默认剥离 label** |
+| `solution_segment` | 步骤切分 |
+| `check_answer` | 答案三级校验 |
+| `check_format` | 形式要求校验 |
+| `check_step_symbolic` | 逐步确定性判定 + 标出需 LLM 审查的步骤 |
+| `verdict_record` | 落盘评判结果，判错未举证会被拒 |
+| `metrics_compute` | 定位准确率 / 误报率 / 一致性 / 稳定性 |
+| `report_export` | 结果表格与人工抽检清单 |
+
+设计要点：
+
+- **工具逻辑与 MCP 协议解耦** —— 逻辑在 `tools.py`，`__main__.py` 只做注册。
+  单测不需要起服务，协议层另有冒烟测试。
+- **标注泄漏是红线** —— `dataset_next_batch` 默认返回剥离 `label` 的副本，
+  ground truth 只在 `metrics_compute` 阶段从样本集读取。有专门测试断言批次
+  JSON 里不出现任何标注字段。
+- **判错必须举证** —— `verdict_record` 走 pydantic 校验，`process_valid=false`
+  却没填 `evidence` 会当场被拒，而不是等写报告时才发现证据是空的。
+- **兼容 mcp 1.x 与 2.x** —— 2.x 把 `FastMCP` 改名为 `MCPServer`，两个都试。
+  WorkBuddy 用户机器上版本可能不一，免得因 SDK 版本对不上白折腾。
+
+123 项测试全过（含 MCP 协议层调用）。
 
 ### P4 Skills 落地与联调
 

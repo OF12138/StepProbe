@@ -18,11 +18,19 @@ description: 用 Hy3 解数学题并输出结构化的完整解题过程（而�
 | `--max-mode` | `on` / `off`，用于消融对比 | 跟随当前设置 |
 | `--source` | `processbench` / `cn_custom` | `cn_custom` |
 
+## 可用的 MCP 工具（stepprobe）
+
+| 工具 | 作用 |
+|---|---|
+| `dataset_next_batch(n, tier, label_class, run_id)` | 取一批题目 |
+| `solution_segment(text)` | 把解答切成 1-based 步骤（用于自检编号） |
+| `check_answer(pred, gold)` | 自查最终答案（可选） |
+
 ## 流程
 
-1. 调用 MCP 工具 `dataset.next_batch(source, tier, n)` 取一批题目。
-2. 对每道题，按下面的输出规范解题。
-3. 调用 `verdict.record(sample_id, solution)` 落盘。
+1. `dataset_next_batch(n=20, tier="T2")` 取一批题目，记下返回的 `run_id`。
+2. 对每道题按下面的输出规范解题。
+3. 把结果写入 `results/runs/<run_id>/solutions.jsonl`（每行一个 JSON 对象）。
 
 ## 输出规范
 

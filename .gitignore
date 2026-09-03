@@ -25,3 +25,4 @@ Thumbs.db
 
 # WorkBuddy 本地配置（可能含密钥）
 .workbuddy/
+!.workbuddy/mcp.json.example
