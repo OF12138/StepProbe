@@ -208,13 +208,18 @@ def report_export(run_id: str | None = None, kind: str = "summary") -> dict:
         rows = _audit_rows(verdicts, samples)
         path = store.write_json(resolved, "human_audit.json", {"rows": rows})
         _write_audit_csv(resolved, rows)
+        by_kind = Counter(r["disagreement_kind"] for r in rows)
         return {
             "run_id": resolved,
             "kind": kind,
             "n_rows": len(rows),
+            "by_disagreement_kind": dict(by_kind),
             "path": str(path),
             "csv": str(store.run_dir(resolved) / "audit_sheet.csv"),
-            "note": "请人工在 human_verdict 列填写 真实问题 / 真误报",
+            "note": (
+                "请人工在 human_verdict 列填写：评估器正确 / 评估器错误 / 标注有误。"
+                "0 行说明评估器与人工标注完全一致，属正常结果，不是导出失败。"
+            ),
         }
 
     rows = [
@@ -239,28 +244,67 @@ def report_export(run_id: str | None = None, kind: str = "summary") -> dict:
     }
 
 
+def _disagreement_kind(v: Verdict, s: Sample) -> str | None:
+    """判断评估器与人工标注的分歧类型。一致则返回 None。"""
+    label = s.label
+    assert label is not None
+
+    if label.process_correct and not v.process_valid:
+        return "false_positive"      # 标注无误，评估器判错 → 误报候选
+    if not label.process_correct and v.process_valid:
+        return "missed"              # 标注有误，评估器漏过 → 漏报
+    if not label.process_correct and not v.process_valid:
+        if v.first_error_step != label.first_error_step:
+            return "mislocalized"    # 都判有误，但步号不同 → 定位偏差
+    return None
+
+
 def _audit_rows(verdicts: list[Verdict], samples: dict[str, Sample]) -> list[dict]:
-    """误报候选清单：评估器判有问题、但人工标注为过程无误的样本。"""
-    rows = []
+    """人工抽检清单：评估器与人工标注不一致的全部样本。
+
+    覆盖三类分歧，而不只是误报：
+
+      false_positive  标注无误、评估器判错 —— 任务书要求抽检的核心类别
+      missed          标注有误、评估器漏过
+      mislocalized    都判有误但步号不同
+
+    只收误报会有个实际问题：误报率低到 0 时清单为空，人工抽检就无从做起
+    （首轮 20 条实跑正是如此，误报率 0/8）。而漏报与定位偏差同样需要人工
+    确认「究竟是评估器错了，还是原标注有问题」—— 这两类反而更常出现。
+
+    同一样本多次评判时只取最后一次，避免稳定性重复评估把清单撑成 N 倍。
+    """
+    latest: dict[str, Verdict] = {}
     for v in verdicts:
-        s = samples.get(v.sample_id)
-        if s is None or s.label is None or v.process_valid:
+        latest[v.sample_id] = v
+
+    rows = []
+    for sid, v in sorted(latest.items()):
+        s = samples.get(sid)
+        if s is None or s.label is None:
             continue
-        if not s.label.process_correct:
+        kind = _disagreement_kind(v, s)
+        if kind is None:
             continue
+
+        step_idx = v.first_error_step or s.label.first_error_step
         rows.append(
             {
-                "sample_id": v.sample_id,
+                "disagreement_kind": kind,
+                "sample_id": sid,
                 "tier": s.tier.value,
-                "gold": "过程无误",
-                "evaluator_says": f"第 {v.first_error_step} 步 {v.error_type}",
+                "gold_process": "无误" if s.label.process_correct else "有误",
+                "gold_step": s.label.first_error_step,
+                "evaluator_process": "无误" if v.process_valid else "有误",
+                "evaluator_step": v.first_error_step,
+                "evaluator_error_type": v.error_type,
                 "evidence": v.evidence,
                 "step_content": (
-                    s.solution_steps[v.first_error_step - 1][:500]
-                    if v.first_error_step and v.first_error_step <= s.n_steps
+                    s.solution_steps[step_idx - 1][:500]
+                    if step_idx and step_idx <= s.n_steps
                     else ""
                 ),
-                "human_verdict": "",   # 待人工填写：真实问题 / 真误报
+                "human_verdict": "",   # 待人工填：评估器正确 / 评估器错误 / 标注有误
                 "human_note": "",
             }
         )
@@ -272,7 +316,9 @@ def _write_audit_csv(run_id: str, rows: list[dict]) -> None:
 
     path = store.run_dir(run_id) / "audit_sheet.csv"
     fields = [
-        "sample_id", "tier", "gold", "evaluator_says",
+        "disagreement_kind", "sample_id", "tier",
+        "gold_process", "gold_step",
+        "evaluator_process", "evaluator_step", "evaluator_error_type",
         "evidence", "step_content", "human_verdict", "human_note",
     ]
     with path.open("w", encoding="utf-8-sig", newline="") as fh:

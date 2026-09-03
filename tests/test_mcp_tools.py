@@ -296,3 +296,89 @@ def test_stability_tracks_repeats(workspace) -> None:
     m = tools.metrics_compute(run_id)
     assert m["stability"]["n_repeated_samples"] == 1
     assert m["stability"]["step_mode_ratio"] == pytest.approx(2 / 3)
+
+
+# ---------------------------------------------------------------------------
+# 首轮实跑（20 条）暴露的问题，回归用例
+# ---------------------------------------------------------------------------
+
+def test_audit_sheet_covers_all_disagreement_kinds(workspace) -> None:
+    """抽检表要覆盖三类分歧，不能只收误报。
+
+    首轮实跑误报率是 0/8，只收误报会导致清单为空、人工抽检无从下手，
+    而漏报与定位偏差同样需要人工确认「是评估器错了还是原标注有问题」。
+    """
+    run_id = tools.dataset_next_batch(n=1)["run_id"]
+    samples = store.load_samples()
+    clean = next(s for s in samples if s.label and s.label.process_correct)
+    faulty = [s for s in samples if s.label and not s.label.process_correct]
+
+    # 误报：标注无误，评估器判错
+    tools.verdict_record(run_id, {
+        "sample_id": clean.id, "process_valid": False,
+        "first_error_step": 2, "error_type": "E3", "evidence": "疑似算错",
+    })
+    # 漏报：标注有误，评估器判无误
+    tools.verdict_record(run_id, {"sample_id": faulty[0].id, "process_valid": True})
+    # 定位偏差：都判有误但步号不同（标注是 2）
+    tools.verdict_record(run_id, {
+        "sample_id": faulty[1].id, "process_valid": False,
+        "first_error_step": 3, "error_type": "E5", "evidence": "跳步",
+    })
+    # 完全一致：不应进入清单
+    tools.verdict_record(run_id, {
+        "sample_id": faulty[2].id, "process_valid": False,
+        "first_error_step": 2, "error_type": "E3", "evidence": "命中",
+    })
+
+    r = tools.report_export(run_id, kind="human_audit")
+    assert r["by_disagreement_kind"] == {
+        "false_positive": 1, "missed": 1, "mislocalized": 1
+    }, r["by_disagreement_kind"]
+    assert r["n_rows"] == 3, "判断一致的样本不该进抽检表"
+
+
+def test_audit_sheet_dedups_repeated_verdicts(workspace) -> None:
+    """稳定性重复评估不应把抽检表撑成 N 倍。"""
+    run_id = tools.dataset_next_batch(n=1)["run_id"]
+    clean = next(s for s in store.load_samples() if s.label and s.label.process_correct)
+    for _ in range(5):
+        tools.verdict_record(run_id, {
+            "sample_id": clean.id, "process_valid": False,
+            "first_error_step": 2, "error_type": "E3", "evidence": "疑似算错",
+        })
+    assert tools.report_export(run_id, kind="human_audit")["n_rows"] == 1
+
+
+def test_stability_rejects_identical_resubmissions(workspace) -> None:
+    """机械重复提交必须被识别，不能算出 1.0 的假满分。
+
+    首轮实跑就是把同一条 verdict 原样重提 5 次，得到 step_mode_ratio=1.0 ——
+    这个 1.0 只证明「同一份 JSON 存五遍还是它自己」。
+    """
+    run_id = tools.dataset_next_batch(n=1)["run_id"]
+    payload = {
+        "sample_id": "T1-00", "process_valid": False, "first_error_step": 2,
+        "error_type": "E3", "evidence": "完全相同的证据",
+    }
+    for _ in range(5):
+        tools.verdict_record(run_id, dict(payload))
+
+    st = tools.metrics_compute(run_id)["stability"]
+    assert st["valid"] is False
+    assert st["step_mode_ratio"] is None, "无效指标必须置空，不能给出假满分"
+    assert st["n_identical_resubmissions"] == 1
+    assert "机械重复" in st["note"]
+
+
+def test_stability_valid_when_verdicts_differ(workspace) -> None:
+    """真正独立重评（结果有差异）时稳定性指标有效。"""
+    run_id = tools.dataset_next_batch(n=1)["run_id"]
+    for step, ev in [(2, "证据甲"), (2, "证据乙"), (3, "证据丙")]:
+        tools.verdict_record(run_id, {
+            "sample_id": "T1-00", "process_valid": False,
+            "first_error_step": step, "error_type": "E3", "evidence": ev,
+        })
+    st = tools.metrics_compute(run_id)["stability"]
+    assert st["valid"] is True
+    assert st["step_mode_ratio"] == pytest.approx(2 / 3)

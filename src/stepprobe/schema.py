@@ -39,6 +39,21 @@ class LabelClass(str, Enum):
     OTHER = "other"                  # 过程无误 + 答案错误（罕见，应人工核查）
 
 
+#: 允许随剥离标注的样本一起外发的 meta 键（白名单）。
+#:
+#: 白名单而非黑名单：新增 meta 字段时默认**不**外发，避免再出现
+#: `raw_label` 那样悄悄夹带 ground truth 的情况。要新增可外发字段，
+#: 必须在这里显式加上，并想清楚它是否间接透露标注。
+SAFE_META_KEYS: frozenset[str] = frozenset(
+    {
+        "original_id",   # 原始数据集 ID
+        "split",         # 所属 split（与难度层等价，样本自身已含 tier）
+        "granularity",   # 步骤粒度：step / section
+        "source_url",
+    }
+)
+
+
 class Step(BaseModel):
     """解题过程中的一步。"""
 
@@ -107,9 +122,16 @@ class Sample(BaseModel):
         """剥离标注后的副本。
 
         评估阶段**必须**用这个方法取样本 —— 一旦 ground truth 进入模型上下文，
-        本次验证就作废了。MCP 工具 dataset.next_batch() 默认走这条路径。
+        本次验证就作废了。MCP 工具 dataset_next_batch() 默认走这条路径。
+
+        **不只清 label，还要清 meta 里携带标注的字段。** 这是实跑中踩到的坑：
+        loader 曾把 ProcessBench 的原始 `raw_label`（0-based 首错步号）塞进
+        meta，`label=None` 之后 meta 里那份 ground truth 照样发了出去。当时
+        单测用的夹具 meta 是空的，测试全绿而真实数据在泄漏 —— 所以这里改成
+        **白名单**：只保留明确安全的 meta 键，新增字段默认不外发。
         """
-        return self.model_copy(update={"label": None})
+        safe_meta = {k: v for k, v in (self.meta or {}).items() if k in SAFE_META_KEYS}
+        return self.model_copy(update={"label": None, "meta": safe_meta})
 
 
 class StepVerdict(BaseModel):

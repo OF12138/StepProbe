@@ -184,14 +184,31 @@ def compute(
 
 
 def stability(verdicts: list[Verdict]) -> dict:
-    """稳定性：同一样本多次评判的众数占比与错误类型一致率。"""
+    """稳定性：同一样本多次评判的众数占比与错误类型一致率。
+
+    **会检测「机械重复提交」并作废该指标。**
+
+    首轮 20 条实跑时，稳定性做法是把同一条 verdict 原样重提 5 次，结果
+    `step_mode_ratio = 1.0` —— 这个 1.0 只证明了「同一份 JSON 存五遍还是它
+    自己」，与评估器的稳定性毫无关系，却长得跟满分一样，很容易被当成结论
+    写进报告。
+
+    因此这里比对每次评判的完整内容（步号 + 类型 + 证据）：若某样本的多次
+    记录逐字相同，判定为机械重复，`valid` 置 false 并给出说明。真实的稳定性
+    验证必须是**独立重新评估**（清空上下文重跑），而不是重复落盘。
+    """
     grouped: dict[str, list[Verdict]] = defaultdict(list)
     for v in verdicts:
         grouped[v.sample_id].append(v)
 
     repeated = {k: vs for k, vs in grouped.items() if len(vs) > 1}
     if not repeated:
-        return {"n_repeated_samples": 0, "note": "没有重复评估的样本"}
+        return {"n_repeated_samples": 0, "valid": False, "note": "没有重复评估的样本"}
+
+    def _fingerprint(v: Verdict) -> tuple:
+        return (v.process_valid, v.first_error_step, v.error_type, (v.evidence or "").strip())
+
+    identical = [k for k, vs in repeated.items() if len({_fingerprint(v) for v in vs}) == 1]
 
     step_ratios, type_ratios = [], []
     for vs in repeated.values():
@@ -200,9 +217,22 @@ def stability(verdicts: list[Verdict]) -> dict:
         types = Counter(v.error_type for v in vs)
         type_ratios.append(types.most_common(1)[0][1] / len(vs))
 
-    return {
+    all_identical = len(identical) == len(repeated)
+    result = {
         "n_repeated_samples": len(repeated),
         "mean_repeats": sum(len(v) for v in repeated.values()) / len(repeated),
+        "n_identical_resubmissions": len(identical),
+        "valid": not all_identical,
         "step_mode_ratio": sum(step_ratios) / len(step_ratios),
         "error_type_agreement": sum(type_ratios) / len(type_ratios),
     }
+    if all_identical:
+        result["note"] = (
+            "全部重复记录逐字相同，判定为机械重复提交，稳定性指标无效。"
+            "真实稳定性验证需清空上下文独立重新评估，不能重复落盘同一结果。"
+        )
+        result["step_mode_ratio"] = None
+        result["error_type_agreement"] = None
+    elif identical:
+        result["note"] = f"{len(identical)} 个样本的重复记录逐字相同，这部分不计入稳定性。"
+    return result
