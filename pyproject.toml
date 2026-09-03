@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stepprobe"
+version = "0.1.0"
+description = "面向可验证场景的过程评估与错误定位系统（WorkBuddy + Hy3）"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "sympy>=1.13",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "pandas>=2.0",
+    "pyarrow>=14.0",
+    "tqdm>=4.66",
+    "statsmodels>=0.14",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.2.0"]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

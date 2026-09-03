@@ -33,7 +33,7 @@ datasets:
     role: generalization            # 跨域泛化验证
     hf_id: OpenStellarTeam/DeltaBench
     use_original_step_index: true
-    subsets: [math, programming]    # 数学为主，编程子集用于跨域检验
+    subsets: [math, code]           # 实测 task_l1 取值：math/code/Physics&Chemistry&Biology/general
 
   cn_custom:
     enabled: true
@@ -48,11 +48,12 @@ datasets:
 # ---------------------------------------------------------------
 sampling:
   strategy: stratified
-  per_cell: 50                      # 4 个难度层 × 2 类标签 = 8 个子层
-  total: 400
-  balance_labels: true              # 有误/无误各半，保证两个核心指标样本量相当
+  per_cell: 40                      # 4 个难度层 × 3 类标签 = 12 个单元
+  # 三分类：faulty_wrong（定位准确率）/ clean_correct（误报率）/ e9（答案对但过程错）
+  # 实测总量约 447 条（T1/e9 仅 7 条，不足 40 故全取）
   note: >-
-    该抽样不反映真实错误率分布，不可用于估计模型总体过程正确率。
+    各类别等量抽样，不反映真实类别分布，因此不可用于估计模型总体过程正确率；
+    总体分布相关结论只在自建中文子集（全量评测）上给出。
   confidence_interval: wilson
   ci_level: 0.95
 
