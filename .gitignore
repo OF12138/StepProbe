@@ -1,0 +1,27 @@
+# 数据与结果（不入库）
+data/
+results/*/
+!results/*/.gitkeep
+
+# 环境
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# WorkBuddy 本地配置（可能含密钥）
+.workbuddy/

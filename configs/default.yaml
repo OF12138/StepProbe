@@ -1,0 +1,119 @@
+# StepProbe 默认运行配置
+
+seed: 20260903          # 抽样随机种子，保证可复现
+
+paths:
+  data_dir: ./data
+  results_dir: ./results
+  taxonomy: ./configs/taxonomy.yaml
+
+# ---------------------------------------------------------------
+# 数据集
+# ---------------------------------------------------------------
+datasets:
+
+  processbench:
+    enabled: true
+    role: validation_primary        # 主验证集：定位准确率 + 误报率
+    hf_id: Qwen/ProcessBench
+    use_original_step_index: true   # 必须沿用原始步骤索引，避免步号错位
+    tiers:                          # 分层依据：题源难度阶梯
+      T1: gsm8k
+      T2: math
+      T3: olympiadbench
+      T4: omnimath
+
+  prmbench:
+    enabled: true
+    role: error_type_validation     # 错误类型一致性验证
+    use_original_step_index: true
+
+  deltabench:
+    enabled: true
+    role: generalization            # 跨域泛化验证
+    hf_id: OpenStellarTeam/DeltaBench
+    use_original_step_index: true
+    subsets: [math, programming]    # 数学为主，编程子集用于跨域检验
+
+  cn_custom:
+    enabled: true
+    role: evaluation                # 评测执行：Hy3 的实际表现
+    target_size: 150
+    sources: [gaokao, league]
+    answer_must_be_verifiable: true # 排除证明题与作图题
+    tier_by: [source, ref_solution_steps]
+
+# ---------------------------------------------------------------
+# 分层抽样（详见 docs/dataset.md §5）
+# ---------------------------------------------------------------
+sampling:
+  strategy: stratified
+  per_cell: 50                      # 4 个难度层 × 2 类标签 = 8 个子层
+  total: 400
+  balance_labels: true              # 有误/无误各半，保证两个核心指标样本量相当
+  note: >-
+    该抽样不反映真实错误率分布，不可用于估计模型总体过程正确率。
+  confidence_interval: wilson
+  ci_level: 0.95
+
+# ---------------------------------------------------------------
+# 评估流水线
+# ---------------------------------------------------------------
+evaluator:
+
+  short_circuit: true               # L1/L2 命中错误后停止逐步审查
+  always_run_l3: true               # L3 必须执行 —— E9 只在全部单步通过时出现
+
+  l0_segment:
+    prefer_structured_output: true
+    fallback_order: [dataset_index, explicit_numbering, paragraph, sentence]
+
+  l1_symbolic:
+    answer_check:
+      levels: [normalize, sympy_equiv, numeric_sample]
+      numeric_samples: 8
+      tolerance: 1.0e-9
+      simplify_timeout_s: 5
+    step_check:
+      returns: [FALSE, UNKNOWN, TRUE]
+      # TRUE 不放行 —— 每步算对不等于整体论证成立，仍需 L3 复核 E9
+      true_still_needs_l3: true
+
+  l2_stepwise:
+    whole_chain_single_call: true   # 吞吐约束：整链单次调用返回数组
+    hide_final_answer_correctness: true   # 防止结果偏置污染两个核心指标
+    require_evidence: true
+    default_verdict: valid          # 默认成立，举证判错
+    handles: [E2, E5, E7]
+
+  l3_global:
+    handles: [E1, E4, E6, E9]
+    e9_signals: [grounding, perturbation, step_deletion]
+    e9_min_signals: 2               # 三重信号至少两项命中才判 E9
+
+# ---------------------------------------------------------------
+# 指标
+# ---------------------------------------------------------------
+metrics:
+  localization:
+    tolerance: [0, 1]               # 同时报告 Exact 与 ±1 容忍
+    denominator: all_faulty         # 未检出记为定位失败，避免虚高
+  false_positive:
+    human_audit_min: 50             # 任务书要求的人工抽检
+    report_both: true               # 原始误报率 + 人工修正后误报率
+  error_type:
+    report: [accuracy, macro_f1, confusion_matrix]
+  stability:
+    repeats: 5                      # 同一条链重复评估次数
+
+# ---------------------------------------------------------------
+# 模型侧（WorkBuddy 唯一可控变量）
+# ---------------------------------------------------------------
+model:
+  provider: workbuddy
+  name: hy3
+  max_mode_ablation:
+    enabled: true
+    settings: [off, on]
+    compare: [answer_accuracy, process_accuracy, e9_ratio]
+    # 关键问题：Max Mode 是让推导更严谨，还是只是让答案更容易蒙对？

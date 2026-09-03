@@ -1,0 +1,131 @@
+# StepProbe 错误分类体系
+#
+# 设计原则：每条判定标准必须可操作 —— 不同评审者依据它应得出接近的结论。
+# 刻意避免「较好地满足要求」「基本符合」这类缺少判定依据的表述。
+
+version: "1.0"
+
+layers:
+  L1: "确定性校验（MCP 工具 / SymPy，零 LLM）"
+  L2: "分步审查（Hy3，给定前缀判定当前步）"
+  L3: "全局复核（Hy3，链级判定）"
+
+error_types:
+
+  - id: E1
+    name: 题意误读
+    name_en: Misreading
+    layer: L3
+    criterion: >-
+      解答实际求解的目标与题干所问不一致。判定方式：抽取题干的求解目标（求什么量、
+      什么形式），与解答最终给出的量做比对，二者指称不同即命中。
+    positive_example: "题目求「x 的取值范围」，解答求出了「x 的一个特解」。"
+    negative_example: "题目求 x，解答求出 x 后附带说明了 y，但最终答案给的是 x —— 不命中。"
+    prm_bench_map: [Domain Consistency]
+
+  - id: E2
+    name: 概念/定理误用
+    name_en: Theorem Misapplication
+    layer: L2
+    criterion: >-
+      步骤引用了某定理、公式或性质，但其成立前提在本题条件下不满足。判定方式：
+      指出被引用的定理名称或公式，列出其前提，指明哪一条前提在本题不成立。
+      无法指出具体前提的，不得判定为 E2。
+    positive_example: "对未证明可导的函数直接使用洛必达法则。"
+    negative_example: "使用了不常见但确实成立的恒等式 —— 不命中。"
+    prm_bench_map: [Empirical Soundness, Domain Consistency]
+
+  - id: E3
+    name: 计算错误
+    name_en: Calculation Error
+    layer: L1
+    criterion: >-
+      该步中形如 LHS = RHS 的等式经 SymPy 符号等价判定或多点随机数值代入判定为不成立。
+      本类型完全由确定性工具判定，不接受 LLM 单独判定。
+    positive_example: "(x+1)^2 = x^2 + 1"
+    negative_example: "表达式无法被解析为等式 —— 返回 UNKNOWN，转 L2，不判 E3。"
+    prm_bench_map: [Step Consistency]
+
+  - id: E4
+    name: 条件遗漏
+    name_en: Missing Condition
+    layer: L3
+    criterion: >-
+      题干给出的某个条件在整条推理链中从未被使用，且该条件影响最终结果。
+      判定需满足两点：(a) 列举出未被使用的具体条件；(b) 说明去掉该条件后
+      结论会改变。仅满足 (a) 而条件确为冗余的，不命中。
+    positive_example: "题目给定 x > 0，解答求解时未排除负根。"
+    negative_example: "题目给出的某个数值确实与所求无关 —— 不命中。"
+    prm_bench_map: [Prerequisite Sensitivity]
+
+  - id: E5
+    name: 跳步推导
+    name_en: Logical Leap
+    layer: L2
+    criterion: >-
+      从 step[i-1] 无法推出 step[i]，缺少必要的中间推导。判定方式：指出
+      需要补充的中间环节是什么。若能明确写出缺失的那一步，则命中；
+      若只是「写得比较简略」但推导本身成立，不命中。
+    positive_example: "由「f 连续」直接得出「f 有最大值」，未说明定义域为闭区间。"
+    negative_example: "省略了显然的算术化简步骤 —— 不命中。"
+    prm_bench_map: [Non-Redundancy, Step Consistency]
+
+  - id: E6
+    name: 循环论证
+    name_en: Circular Reasoning
+    layer: L3
+    criterion: >-
+      某步的论证依据实质上就是待证结论本身，或依赖了由待证结论推出的中间结果。
+      判定方式：指出「用 A 证 B」中 A 对 B 的依赖路径。
+    positive_example: "证明数列单调，过程中直接使用了「因为数列单调」。"
+    negative_example: "使用了此前已独立证明的引理 —— 不命中。"
+    prm_bench_map: [Non-Circular Logic]
+
+  - id: E7
+    name: 幻觉引用
+    name_en: Hallucinated Reference
+    layer: L2
+    criterion: >-
+      引用了不存在的定理、公式或题干中未给出的已知量。判定方式：指出被引用
+      对象的名称，并说明它既不在题干中，也非公认的数学事实。
+    positive_example: "引用「柯西—欧拉三角不等式」（不存在的定理）。"
+    negative_example: "定理名称叫法不标准但内容正确 —— 不命中。"
+    prm_bench_map: [Empirical Soundness]
+
+  - id: E8
+    name: 格式不符
+    name_en: Format Violation
+    layer: L1
+    criterion: >-
+      最终答案形式不满足题目明确要求（区间形式、最简分数、保留位数、单位、
+      集合表示等）。由规则校验判定。注意：仅当题目明确提出形式要求时才适用。
+    positive_example: "题目要求保留两位小数，答案给出 3.14159。"
+    negative_example: "题目未要求形式，答案用了小数而非分数 —— 不命中。"
+    prm_bench_map: []
+
+  - id: E9
+    name: 答案正确但过程不成立
+    name_en: Correct Answer, Invalid Process
+    layer: L3
+    criterion: >-
+      check.answer() 判定最终答案正确，但推理链存在 E1–E7 中任一问题，
+      即答案并非由该链条正确推出。需三重信号中至少两项指向问题：
+      (a) 依据充分性 —— 最终答案未由前序步骤逻辑推出；
+      (b) 扰动检验 —— 轻微改变题目条件后该链条给出的答案不随之改变或明显荒谬；
+      (c) 步骤删除检验 —— 删去某关键步骤后结论仍「成立」，说明存在虚假依赖。
+      证据阈值高于其他类型，因为误判代价大。
+    positive_example: "选择题中随意排除三个选项后蒙对；两个符号错误恰好抵消。"
+    negative_example: "推导正确但表述啰嗦 —— 不命中。"
+    prm_bench_map: [Deception Resistance, Multi-Solution Consistency]
+
+# 判定原则
+principles:
+  default_verdict: valid
+  rationale: >-
+    默认判定为「成立」，仅在能给出具体证据时才判错。这是刻意的保守设置 ——
+    误报率是任务书要求的核心验证指标，且误报会直接摧毁工具的实用价值。
+    宁可漏报，不可误报。
+  evidence_required: true
+  evidence_note: >-
+    每一次判错都必须填写 evidence 字段，指明具体是哪个论断不成立。
+    无证据的判错在 L3 中降权处理。
