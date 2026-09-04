@@ -286,3 +286,56 @@ def test_truncated_decimal_tolerated() -> None:
 def test_genuine_integer_division_error_still_caught() -> None:
     """整除惯用法的豁免不能宽到放过真错：49//9 是 5，不是 6。"""
     assert check_equation(r"49 \div 9", "6").verdict is StepVerdictValue.FALSE
+
+
+# ---------------------------------------------------------------------------
+# 答案装饰的剥离
+# ---------------------------------------------------------------------------
+#
+# 这批用例不是想出来的，是从 P6 题目集的交叉印证里**捞出来的**：同一道题被两个
+# 模型答对，两份正确答案却被判为不等。逐条看下去，23 处不一致里 20 处是装饰差异，
+# 不是答案差异。修完交叉印证一致率从 79.1% 升到 95.5%。
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        (r"x = \sqrt{2}", r"\sqrt{2}"),           # 变量名前缀
+        ("y = 12", "12"),
+        (r"f(x) = x + 22", "x + 22"),             # 函数名前缀
+        (r"\sin \theta = \frac{-1+\sqrt{5}}{2}", r"\frac{-1 + \sqrt{5}}{2}"),
+        (r"4^\circ", "4"),                        # 角度单位
+        (r"4^{\circ}", "4"),
+        (r"17.5 \%", "17.5"),                     # 百分号
+        ("1, 3", r"1 \text{ and } 3"),            # 连接词当分隔符
+        ("0.01, 100", r"0.01 \text{ and } 100"),
+    ],
+)
+def test_decoration_does_not_make_equal_answers_unequal(pred: str, gold: str) -> None:
+    assert check_answer(pred, gold).correct, f"{pred!r} vs {gold!r} 应判相等"
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        ("4.0", "4.2"),
+        ("567", r"\frac{567}{4}"),
+        ("x = 3", "4"),                # 剥掉前缀后仍然不等
+        (r"5^\circ", "4"),             # 剥掉单位后仍然不等
+        ("1, 3", "1, 4"),
+    ],
+)
+def test_decoration_stripping_never_washes_unequal_into_equal(pred: str, gold: str) -> None:
+    """剥离是兜底，只能把「本该相等」救回来，不能把「本来不等」洗成相等。"""
+    assert not check_answer(pred, gold).correct, f"{pred!r} vs {gold!r} 不应判相等"
+
+
+def test_multi_variable_answer_keeps_its_equals_signs() -> None:
+    """"x = 1, y = 2" 这类多变量答案不能被剥成 "1, y = 2"。
+
+    _strip_decoration 只在剥完不再含 "=" 时才采用剥离结果。
+    """
+    from stepprobe.checkers.answer import _strip_decoration
+
+    assert _strip_decoration("x = 1, y = 2") == "x = 1, y = 2"
+    assert check_answer("x = 1, y = 2", "x = 1, y = 2").correct

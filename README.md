@@ -241,24 +241,41 @@ python -m stepprobe.data.build --config configs/default.yaml
 
 ### 9.4 安装 Skills
 
-将 [`skills/`](skills/) 下的 `solve` / `evaluate` / `validate` 导入 WorkBuddy，随后在对话框中以 `/` 调用。
+将 [`skills/`](skills/) 下的 `solve` / `evaluate` / `validate` / `ablate` 导入 WorkBuddy，
+随后在对话框中以 `/` 调用。选定本仓库为 workspace 时 WorkBuddy 会自动识别项目层级 Skills。
 
 ### 9.5 运行
 
-在 WorkBuddy 中依次执行：
+**第一步：验证评估器本身（P5）**
 
 ```
-/validate  --split processbench --n 400
-    → 在人工标注数据上验证评估器，产出定位准确率与误报率
-
-/solve     --tier all --n 200 --max-mode on
-    → 用 Hy3 生成结构化解题过程
-
-/evaluate  --run latest
-    → 对生成结果做过程评估，产出完整结果表格与错误类型分布
+/validate --n 60
+    → 在人工标注数据上验证评估器，产出定位准确率、误报率、E9 召回与稳定性
 ```
 
-结果写入 `results/`，报告由 `metrics.compute()` 与 `report.export()` 生成。
+**第二步：人工抽检（P7，不可跳过）**
+
+```bash
+python scripts/pre_audit.py --run <run_id>       # 生成判断包，把「逐条分析」降为「逐条确认」
+# 人工填写 results/runs/<run_id>/audit_sheet.csv 的 human_verdict 列
+python scripts/apply_audit.py --run <run_id>     # 应用人工结论，重算修正后指标
+```
+
+**第三步：Max Mode 消融（P6）**
+
+```bash
+python scripts/build_p6_set.py                   # 构建 160 道题目集（含反推的标准答案）
+```
+
+```
+/ablate     → 依次在 Max Mode 关 / 开两种设置下解同一批题，再逐条评估
+```
+
+```bash
+python scripts/p6_score.py --run <run_id>        # 同题配对对比 + McNemar 检验
+```
+
+结果写入 `results/runs/<run_id>/`。
 
 ---
 
@@ -279,44 +296,52 @@ WorkBuddy 是交互式 Agent 工作站，**没有批量推理 API**，所有模�
 
 ```
 stepprobe/
-├── README.md
-├── LICENSE
+├── README.md  ·  LICENSE  ·  requirements.txt
 ├── .env.example              # 配置样例（不含真实密钥）
-├── .gitignore
-├── requirements.txt
+├── .workbuddy/mcp.json.example
 ├── configs/
-│   ├── default.yaml          # 数据与运行配置
-│   └── taxonomy.yaml         # 错误分类体系定义（含判定标准）
+│   ├── default.yaml          # 数据、抽样与运行配置
+│   └── taxonomy.yaml         # 错误分类体系（含判定标准与判定口径）
 ├── src/stepprobe/
-│   ├── mcp_server/           # MCP Server 入口与工具注册
-│   │   ├── __main__.py
-│   │   └── tools/            # dataset / check / verdict / metrics / report
+│   ├── mcp_server/
+│   │   ├── __main__.py       # MCP 工具注册（兼容 mcp 1.x / 2.x）
+│   │   ├── tools.py          # 10 个工具的纯函数实现
+│   │   └── store.py          # run_id 状态与落盘
 │   ├── checkers/
-│   │   ├── answer.py         # 最终答案三级校验
-│   │   ├── symbolic.py       # 步骤等式符号与数值校验
+│   │   ├── answer.py         # 最终答案三级校验 + 装饰剥离
+│   │   ├── symbolic.py       # 步骤等式符号与数值校验（L1）
+│   │   ├── latex.py          # LaTeX 归一化与可解析性判断
 │   │   └── segment.py        # 步骤切分
-│   ├── data/                 # 各数据集 → 统一 schema
-│   └── metrics/              # 定位准确率、误报率、一致性
+│   ├── data/                 # ProcessBench / DeltaBench → 统一 schema
+│   ├── metrics/core.py       # 定位准确率、误报率、一致性、稳定性
+│   └── schema.py             # 统一数据模型（含标注剥离白名单）
 ├── skills/                   # WorkBuddy Skills
 │   ├── solve/                # 应用侧：结构化解题
 │   ├── evaluate/             # L2 分步审查 + L3 全局复核
-│   └── validate/             # 有效性验证流程编排
+│   ├── validate/             # 有效性验证流程编排
+│   └── ablate/               # Max Mode 消融实验
+├── scripts/
+│   ├── eval_l1.py            # L1 单独表现与误报诊断
+│   ├── pre_audit.py          # 人工抽检预审：生成判断包
+│   ├── apply_audit.py        # 应用人工结论并重算指标
+│   ├── audit_corrections.json
+│   ├── build_p6_set.py       # 反推标准答案，构建 P6 题目集
+│   └── p6_score.py           # Max Mode 同题配对评分
+├── tests/                    # 144 项
 ├── data/                     # 规整后的评测数据（不入库）
-├── results/
-│   ├── validation/           # 有效性验证结果
-│   ├── eval/                 # 完整评测结果表格
-│   └── human_audit/          # 人工抽检记录
+├── results/runs/<run_id>/    # 每次运行的批次、评判、指标、报告、抽检表
 └── docs/
-    ├── dataset.md            # 样本来源、构造方式、分层依据、抽样方案
-    ├── method.md             # 评估方法设计依据与提示词设计
-    └── report.md             # 分析报告（评测完成后产出）
+    ├── plan.md               # 实施计划与各阶段实测发现
+    ├── dataset.md            # 样本来源、分层依据、抽样方案
+    ├── method.md             # 评估方法、判定口径、指标定义
+    └── report.md             # 跨轮汇总分析报告
 ```
 
 ---
 
 ## 12. 项目状态
 
-> **代码部分（P1–P4）已全部实现并通过 123 项测试。** 后续阶段需要在 WorkBuddy 界面中人工发起。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)。
+> **P1–P5、P7 已完成，通过 144 项测试。** P6 的代码与题目集已就位，等待在 WorkBuddy 中执行。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)，分析结论见 [`docs/report.md`](docs/report.md)。
 
 | 模块 | 状态 |
 |---|---|
@@ -325,12 +350,19 @@ stepprobe/
 | 评估方法与提示词设计 | ✅ 已完成 |
 | 数据管线（P1） | ✅ 已完成 |
 | L1 确定性校验器（P2） | ✅ 已完成，实测误报率 3.6% |
-| MCP Server（P3，8 个工具） | ✅ 已完成 |
-| solve / evaluate / validate Skills | ✅ 已写完，待接入 WorkBuddy |
-| 有效性验证实验（P5） | ⬜ 待人工在 WorkBuddy 中发起 |
-| 完整评测与 Max Mode 消融（P6） | ⬜ 待人工发起 |
-| 人工抽检（P7） | ⬜ 待人工确认 |
-| 分析报告与 Demo（P8） | ⬜ 未开始 |
+| MCP Server（P3，10 个工具） | ✅ 已完成 |
+| solve / evaluate / validate / ablate Skills | ✅ 已完成 |
+| 有效性验证实验（P5） | ✅ n=60，检出率 0.857、误报率 0/23（人工抽检修正后） |
+| 人工抽检（P7） | ✅ 16 条分歧全部人工确认 |
+| Max Mode 消融（P6） | 🟡 题目集与评分脚本就绪，待在 WorkBuddy 中执行 |
+| 分析报告 | ✅ 已完成（P6 部分待补） |
+| Demo（P8） | ⬜ 未开始 |
+
+**目前的主要结论**
+
+- **题目越难，「答案对但推理站不住」的比例越高**：E9 占比从 T1 的 1.75% 升到 T4 的 25.90%（全量 3400 条实测）。只统计最终答案准确率，在难题上会系统性高估模型能力。
+- 评估器在人工标注数据上检出率 0.857、±1 步定位 0.829、误报率 0/23（CI 上界 0.143）。
+- **ProcessBench 的人工标注本身并非无误**：16 条分歧中 4 条经人工确认为标注问题，不做人工抽检就会把这些记在评估器账上。
 
 ---
 
