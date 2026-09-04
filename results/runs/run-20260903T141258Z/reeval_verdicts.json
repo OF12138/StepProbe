@@ -1,0 +1,616 @@
+[
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-114",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "Sandy rate 0.5 lb/wk not 2",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-117",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E4",
+  "evidence": "Morgan herself is a participant",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-129",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "Bottle holds 240 pumps not 60",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-133",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "80+220+23 double-counts initial 80",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-146",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "500 cumulative must subtract",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-234",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "25+4=29,50+29=79 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-307",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "50+25-30=45 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-310",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "20+15=35,50-35=15 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-327",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "30+20=50 min verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-350",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "100+125+175=400 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-370",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "Brother=2x9=18;+3=21 correct",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-388",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "Tue1+Thu2+Sat2=5 correct",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-40",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E3",
+  "evidence": "194x490=95060 not 94860",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-46",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E3",
+  "evidence": "500-150=350; claims 200",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-52",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E3",
+  "evidence": "Double-counts Doxa; total=6 not 7",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-175",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E3",
+  "evidence": "4(x+1/4)^2!=(2x+1/4)^2; a+b+c=3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-323",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E2",
+  "evidence": "Conjugate thm needs real coeffs",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-551",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "r=5->8,r=-1->-112 correct",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-565",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "angle DBE=15 not 90; ans 105",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-568",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "C(3,2)/C(6,2)=1/5 correct",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-582",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "x=1700 sound",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-606",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "a=13/5 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-617",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "dist=13 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-626",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "min16; step6 slip harmless",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-628",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "both radii 1.125 => 1:1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-72",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E3",
+  "evidence": "step2 arith false; n=8",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-720",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "2/20=1/10 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-721",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "(-sqrt3,sqrt3) correct",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-725",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "ext-angle thm misuse;140",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-772",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E3",
+  "evidence": "1375!=5^4*11;90 ok",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-853",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "LCM=60;600/60=10 valid",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-912",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "segs 13+15=28 valid",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-925",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E9",
+  "evidence": "25 right but BC=10 invalid",
+  "e9_signals": [
+   "grounding",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-96",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E5",
+  "evidence": "seniors daily 400 gave 700",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-997",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "19/330 valid",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-249",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 11,
+  "error_type": "E3",
+  "evidence": "(2sqrt2023)^2=8092 not 16184",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-311",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "altitude via midpoint not A",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-354",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "independent min ignores distinctness",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-370",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "AM-GM misapplied",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-371",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E3",
+  "evidence": "2(p+3q) wrong; max 162",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-442",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 5,
+  "error_type": "E5",
+  "evidence": "Skips leg s; ans=9.5",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-561",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E9",
+  "evidence": "12 correct but Case1 false&overcount",
+  "e9_signals": [
+   "grounding",
+   "perturbation",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-691",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E9",
+  "evidence": "81 correct; Case2=40 spurious -1",
+  "e9_signals": [
+   "grounding",
+   "perturbation",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-749",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "set verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-851",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 9,
+  "error_type": "E9",
+  "evidence": "asserts f(n)=n unique unproven",
+  "e9_signals": [
+   "grounding",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-855",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "r=12/5 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-883",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "arcsin 18.8 deg",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-892",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E5",
+  "evidence": "period-9 false; last digit 1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-364",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 9,
+  "error_type": "E3",
+  "evidence": "W=36 not 6; ans=26",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-395",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E5",
+  "evidence": "13 cubes; SA=192",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-536",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "matching counts 764",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-61",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E4",
+  "evidence": "integer-estimate condition omitted; min20",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-623",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "hegemon>planet at p=1 wrong; N=504",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-647",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "f(n)=n+1 not bijection; No false",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-670",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "sqrt81=9 mean9 sqrt9=3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-714",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "max4 plausible no provable err",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-737",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "1/4 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-784",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "tan=1/3 verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-835",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "1296 orbits verified",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-850",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "n=19 verified",
+  "e9_signals": []
+ }
+]

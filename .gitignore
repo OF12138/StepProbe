@@ -1,6 +1,8 @@
 # 数据与结果（不入库）
 data/
 results/*/
+!results/runs/
+!results/runs/**
 !results/*/.gitkeep
 
 # 环境
@@ -26,3 +28,7 @@ Thumbs.db
 # WorkBuddy 本地配置（可能含密钥）
 .workbuddy/
 !.workbuddy/mcp.json.example
+
+# WorkBuddy agent 运行时产生的临时文件
+results/runs/*/_tmp_*
+results/runs/*/_steps_*

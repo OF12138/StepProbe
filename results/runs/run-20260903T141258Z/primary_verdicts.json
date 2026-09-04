@@ -1,0 +1,686 @@
+[
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-114",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "Sandy速率应为0.5 lb/wk而非2；step2建模错",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-117",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E1",
+  "evidence": "算得3人参与≠邀请3位朋友，答案应为2",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-129",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "瓶装泵数应为120×2=240，建模错",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-133",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "80+220+23重复计入初始80",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-146",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "500是总数须扣除，误当可加量",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-234",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步计算正确，无误步",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-307",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步计算正确，无误步",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-310",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步计算正确，无误步",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-327",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步计算正确，无误步",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-350",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步计算正确，无误步",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-370",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "2×9=18,18+3=21计算正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-388",
+  "tier": "T1",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "1+2+2=5计算正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-40",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E3",
+  "evidence": "step2:194×490误算94860，应为95060",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-46",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E3",
+  "evidence": "step4:x=350-150=200，应为350",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-gsm8k-gsm8k-52",
+  "tier": "T1",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "step4重复计Doxa，正确总数应为6",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-175",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 8,
+  "error_type": "E3",
+  "evidence": "step8:5/4误为20/8，正确和应为3",
+  "layer": "L1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-323",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E2",
+  "evidence": "step1误用共轭根定理，系数非全实数",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-551",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "实部/虚部分离求解正确，a=8,-112",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-565",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E9",
+  "evidence": "答案60°对，但∠C=90°/∠DBE=90°前提错",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-568",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "C(3,2)/C(6,2)=3/15=1/5正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-582",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "逐步推导正确,x=1700验证通过",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-606",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "a=13/5代入验证成立",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-617",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "距离=13计算正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-626",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E9",
+  "evidence": "step6 a=2,b=2违背|a-b|=2",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-628",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "两半径相等,比1:1正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-72",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E3",
+  "evidence": "step2算术错,正解n=8",
+  "layer": "L1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-720",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "仅2组质数,1/10正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-721",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 5,
+  "error_type": "E9",
+  "evidence": "step5复数误用,正解(-√3,√3)",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-725",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E9",
+  "evidence": "step3误认外角位置,答案巧合对",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-772",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 1,
+  "error_type": "E3",
+  "evidence": "step1质因数错,答案90仍对",
+  "layer": "L1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-853",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "计算正确,LCM=60,600/60=10",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-912",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "勾股分段正确13+15=28",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-925",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E9",
+  "evidence": "几何关系错但答案25巧合正确",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-math-math-96",
+  "tier": "T2",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E2",
+  "evidence": "误将合计700当seniors日饮量,应400",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-math-math-997",
+  "tier": "T2",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "0.0̄57=19/330推导正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-249",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 11,
+  "error_type": "E3",
+  "evidence": "步骤11 (2√2023)²错算,应为8092",
+  "layer": "L1",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-311",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "高线应过A非BC中点,截距应3",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-354",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 13,
+  "error_type": "E2",
+  "evidence": "错判最小值n,n=3可取到2",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-370",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 5,
+  "error_type": "E2",
+  "evidence": "AM-GM漏(1/(b+7))因子,上界无效",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-371",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "代换错,最大p+q=162非30",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-442",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 5,
+  "error_type": "E5",
+  "evidence": "未推导腰长s，只给7+s而非9.5",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-561",
+  "tier": "T3",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E2",
+  "evidence": "漏算长度1序列，应19非12",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-691",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 6,
+  "error_type": "E9",
+  "evidence": "Case2多算1对+伪重叠，81巧合对",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-749",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "解集{-3/2,-1,0}正确且已验算",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-851",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 8,
+  "error_type": "E9",
+  "evidence": "未证唯一性，f(n)=n恰为解",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "step_deletion"
+  ]
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-855",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "r=12/5正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-883",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "arcsin≈18.8°正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-olympiadbench-olympiadbench-892",
+  "tier": "T3",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E9",
+  "evidence": "周期误判9，末位5巧合对",
+  "layer": "L3",
+  "e9_signals": [
+   "grounding",
+   "perturbation"
+  ]
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-364",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 9,
+  "error_type": "E3",
+  "evidence": "第9步W=6应36，H=56错(应26)",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-395",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E5",
+  "evidence": "应移除13块，SA=192非129",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-536",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "matching counts+764 all correct",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-61",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E4",
+  "evidence": "drops integer constraint; true min 20",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-623",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 3,
+  "error_type": "E3",
+  "evidence": "a_2 must be 0: 4 < 2010",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-647",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 2,
+  "error_type": "E2",
+  "evidence": "f(n)=n+1 not surjective, not bijection",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-670",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "√9=3, every step correct",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-714",
+  "tier": "T4",
+  "answer_correct": false,
+  "process_valid": false,
+  "first_error_step": 5,
+  "error_type": "E5",
+  "evidence": "asserts exactly four with no derivation",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-737",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "1−9/12=1/4正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-784",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "cosθ=3sinθ⇒tanθ=1/3正确",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-835",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": false,
+  "first_error_step": 4,
+  "error_type": "E2",
+  "evidence": "2→5 is diagonal, violates adjacency",
+  "layer": "L3",
+  "e9_signals": []
+ },
+ {
+  "sample_id": "processbench-omnimath-omnimath-850",
+  "tier": "T4",
+  "answer_correct": true,
+  "process_valid": true,
+  "first_error_step": null,
+  "error_type": null,
+  "evidence": "n=19正确",
+  "layer": "L3",
+  "e9_signals": []
+ }
+]

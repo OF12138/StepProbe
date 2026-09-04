@@ -1,0 +1,804 @@
+{
+  "rows": [
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-147",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-154",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-232",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-287",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-240",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-394",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-52",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-733",
+      "tier": "T2",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-68",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-910",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 7,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-977",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-371",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-1",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-94",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-556",
+      "tier": "T3",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-635",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-737",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-7",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-879",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-884",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 3,
+      "error_type": "E5",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-154",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-232",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-240",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-287",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-394",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-147",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-68",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-52",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-1",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-910",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 7,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-733",
+      "tier": "T2",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-371",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-977",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-635",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-94",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-556",
+      "tier": "T3",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-7",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-737",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-879",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-884",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 3,
+      "error_type": "E5",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-147",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-232",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-154",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-287",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-394",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-240",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-52",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-68",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-733",
+      "tier": "T2",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-910",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 7,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-1",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-977",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-371",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-556",
+      "tier": "T3",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-94",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-635",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-7",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-879",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-737",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-884",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 3,
+      "error_type": "E5",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-147",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-232",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-154",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-240",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-287",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-68",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-394",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-52",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-910",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 7,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-733",
+      "tier": "T2",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-1",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-977",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-371",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-94",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-556",
+      "tier": "T3",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-737",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-635",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-7",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-879",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-884",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 3,
+      "error_type": "E5",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-147",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-154",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-240",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-394",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-287",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-232",
+      "tier": "T1",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-gsm8k-gsm8k-52",
+      "tier": "T1",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-733",
+      "tier": "T2",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-68",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-910",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 7,
+      "error_type": "E3",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-math-math-977",
+      "tier": "T2",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-1",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 4,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-371",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 2,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-556",
+      "tier": "T3",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-olympiadbench-olympiadbench-94",
+      "tier": "T3",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E2",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-635",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-737",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-7",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 1,
+      "error_type": "E9",
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-879",
+      "tier": "T4",
+      "process_valid": true,
+      "first_error_step": null,
+      "error_type": null,
+      "layer": "L3"
+    },
+    {
+      "sample_id": "processbench-omnimath-omnimath-884",
+      "tier": "T4",
+      "process_valid": false,
+      "first_error_step": 3,
+      "error_type": "E5",
+      "layer": "L3"
+    }
+  ]
+}

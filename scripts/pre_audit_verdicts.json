@@ -1,0 +1,98 @@
+{
+  "processbench-gsm8k-gsm8k-307": {
+    "verdict": "evaluator_right",
+    "confidence": "high",
+    "reason": "解答从头到尾正确：50 + 50/2 = 75，75 - 30 = 45，答案 45 即 GSM8K 标准答案。标注却把第 2 步记为首错并将样本归入 E9。已独立复算，第 2 步的 50/2=25 与 50+25=75 均无误。判定为 ProcessBench 标注错误，评估器判「过程无误」正确。",
+    "human_question": "请确认第 2 步是否真的存在错误。若确认无误，则本条应从「漏报」中剔除，检出率被低估。"
+  },
+  "processbench-math-math-568": {
+    "verdict": "evaluator_wrong",
+    "confidence": "high",
+    "reason": "第 4 步称「总的可能分配数 = 3 × C(4,4) = 3」。3 份牛排 + 3 份鱼分给 6 名机组人员，总分配数应为 C(6,3) = 20。该步把「为飞行员选鱼餐的方式数」当成了全体样本空间，概率分母因此错误。这是实质错误，标注正确，评估器漏报。",
+    "human_question": null
+  },
+  "processbench-math-math-721": {
+    "verdict": "evaluator_wrong",
+    "confidence": "high",
+    "reason": "第 5 步由 x^2 > -7 推出「x > sqrt(-7)，即 x > i·sqrt(7)，x < -i·sqrt(7)」。求解实数不等式时引入虚数界毫无意义；x^2 > -7 对一切实数恒成立，本应直接判为恒真。属明显的概念误用（E2），标注正确，评估器漏报。",
+    "human_question": null
+  },
+  "processbench-olympiadbench-olympiadbench-749": {
+    "verdict": "evaluator_wrong",
+    "confidence": "high",
+    "reason": "第 10 步以「5x+9 = 3/2，小于 1」为由排除 x = -3/2。但 3/2 = 1.5 > 1，理由本身是事实错误。排除该根即便结论正确，依据也不成立。标注正确，评估器漏报。",
+    "human_question": null
+  },
+  "processbench-math-math-912": {
+    "verdict": "evaluator_wrong",
+    "confidence": "medium",
+    "reason": "绳子实为两段直线（各自连接杆顶与 Paul 站立点），长度 = sqrt(5^2+12^2) + sqrt(9^2+12^2) = 13 + 15 = 28。第 3 步称「绳子不完全直，需在两段之外再加上下垂量」，属概念错误 —— 松弛绳的形状已由两个端点与站立点唯一确定，不存在额外下垂量。标注正确，评估器漏报。",
+    "human_question": "第 3 步只是表述含混，还是实质概念错误？若判为表述问题，则本条应改为 criterion_gap。"
+  },
+  "processbench-math-math-626": {
+    "verdict": "evaluator_wrong",
+    "confidence": "medium",
+    "reason": "第 1 步以「竖直距离 |d-c|」作为平行四边形的边长依据。由 y=ax+c、y=ax+d、y=bx+c、y=bx+d 围成的平行四边形面积为 (d-c)^2/|a-b|，用竖直距离相乘会得到错误面积。标注正确，评估器漏报。",
+    "human_question": "该步文本较长且被截断，请确认其后续是否已改用正确面积公式。"
+  },
+  "processbench-omnimath-omnimath-714": {
+    "verdict": "needs_human",
+    "confidence": "low",
+    "reason": "数据集中的题干不完整 —— 未给出 A、B、C、D 的位置关系，无法判定「恰好四个位置」是否成立。第 5 步以枚举「直接对应 / 反射 / 旋转」的方式论证，缺少完备性证明，但在题干缺失的情况下无法确定标注所指的错误。",
+    "human_question": "需查原始 Omni-MATH 题目补全题干后判断第 5 步的枚举是否遗漏情形。"
+  },
+  "processbench-olympiadbench-olympiadbench-892": {
+    "verdict": "evaluator_right",
+    "confidence": "high",
+    "reason": "已独立复算。项数 49 正确（末项 (T^2)^2 = (T·T)^2，故 k 取 1..49）。但第 3 步称末位数字「每 9 项一循环」是实质错误：(49k)^2 mod 10 的真实周期为 10，序列为 [1,4,9,6,5,6,9,4,1,0]。据此真实末位之和为 225，题解算得 245 —— 二者恰好同末位 5，最终答案才「对」。这是教科书级 E9（答案正确但过程不成立，且正确性来自数值巧合），标注为「过程无误」是漏标。注：评估器的证据里称正确答案为 1，那是把项数误当作 T^2=2401 所致，证据部分有误但核心结论成立。",
+    "human_question": "请确认「周期为 9」是否构成实质错误（而非笔误）。若确认，本条应计入「真实问题」而非误报，误报率降为 1/24。"
+  },
+  "processbench-olympiadbench-olympiadbench-851": {
+    "verdict": "criterion_gap",
+    "confidence": "medium",
+    "reason": "题目要求「determine all functions」。第 8 步自述「plausible that this linear function might be the only solution」，第 9 步即断言「Hence, the solution is f(n)=n」—— 由「可能」跳到「就是」，唯一性未证。按本项目判定标准这构成 E5 跳步 / E9（结论未被论证支撑）；但 ProcessBench 标注的是「步骤内是否存在错误」，并不标注「论证不完整」。双方都不算错，是判定准则不同。",
+    "human_question": "本项目是否应把「未证唯一性」计入过程错误？这一决定会影响误报率口径，需在报告中明确说明。"
+  },
+  "processbench-gsm8k-gsm8k-129": {
+    "verdict": "evaluator_wrong",
+    "confidence": "high",
+    "reason": "第 2 步「120 washings with 2 pumps，therefore 120/2 = 60 pumps per washing」把关系整个倒置了：2 泵/次 × 120 次说明整瓶含 240 泵，而 120/2=60 既非泵数也非每次泵数。这是首个实质错误。评估器指向第 3 步（60 泵对应 60 次），第 3 步只是沿用了第 2 步的错误结论。标注正确，评估器晚了一步。",
+    "human_question": null
+  },
+  "processbench-math-math-565": {
+    "verdict": "evaluator_wrong",
+    "confidence": "high",
+    "reason": "第 1 步称「angle C is also 90 degrees」—— 等腰直角三角形直角在 A，则 B、C 各为 45°，不可能有两个直角。这是明显的首个错误。评估器指向第 3 步（∠DBE=90），那已是被第 1 步污染后的下游错误。标注正确，评估器晚了 2 步 —— 本条超出 ±1 容忍。",
+    "human_question": null
+  },
+  "processbench-math-math-725": {
+    "verdict": "evaluator_wrong",
+    "confidence": "medium",
+    "reason": "第 3 步断言「x 是 △ABC 在顶点 C 处的外角」。按评估器自己的分析，x 实为顶点 B 处的外角。若如此，第 3 步的顶点认定即为首错，第 4 步只是代入该错误前提得数。标注正确，评估器晚了一步。",
+    "human_question": "请对照 asy 图确认 x 标在哪个顶点。若确为 C 处，则第 3 步无误，本条改判 evaluator_right。"
+  },
+  "processbench-gsm8k-gsm8k-117": {
+    "verdict": "evaluator_wrong",
+    "confidence": "medium",
+    "reason": "第 3 步算出 90/30 = 3，这个 3 作为「参与总人数」是正确的；错在第 4 步把它当成「可邀请的朋友数」（Morgan 本人也占一份，应为 2 位朋友）。评估器指向第 3 步，理由是该步措辞已写成「how many people she can invite」—— 措辞确有歧义，但数值无误。属边界情形，落在 ±1 容忍内。",
+    "human_question": "第 3 步的措辞歧义是否已构成错误？若认为构成，本条改判 criterion_gap。"
+  },
+  "processbench-omnimath-omnimath-61": {
+    "verdict": "evaluator_wrong",
+    "confidence": "medium",
+    "reason": "第 2 步以「让两个估计尽量接近」来最小化和，忽略了估计必须为整数的条件，因而得出 19.2 这种非整数下界。评估器指向第 1 步，但第 1 步似已陈述该整数约束（原文在此处被截断）。若第 1 步陈述完整，则首错在第 2 步，标注正确。",
+    "human_question": "第 1 步是否完整陈述了「估计须为整数」？若未陈述，本条改判 evaluator_right。"
+  },
+  "processbench-olympiadbench-olympiadbench-691": {
+    "verdict": "evaluator_right",
+    "confidence": "high",
+    "reason": "已用枚举独立核验：b+c=-1 且 -20<=b,c<=20 的整数对恰为 40 个（c 取 -20..19），第 6 步声称 41 个是边界少算，属实质错误。第 7 步又扣掉根本不存在的整数重叠 b=c=-1/2。两处错误恰好抵消，最终答案 81 才对。首错在第 6 步，评估器正确，标注（第 7 步）晚了一步 —— 且本条同时是 E9。",
+    "human_question": "请确认第 6 步的 41 是否应为 40。若确认，本条计入「标注定位偏晚」，评估器实际表现优于指标所示。"
+  },
+  "processbench-olympiadbench-olympiadbench-249": {
+    "verdict": "evaluator_right",
+    "confidence": "medium",
+    "reason": "已用 SymPy 核验第 9 步：两根为 90±34√7，34√7 = 2√2023，两根之积为 8，故第 9 步的分母 cbrt(90^2-(2√2023)^2) = cbrt(8) = 2，分子 r1·cbrt(r1)+r2·cbrt(r2) 的通分结构亦正确 —— 第 9 步没有错。真错在第 11 步：(2√2023)^2 = 4×2023 = 8092，题解写成 8×2023 = 16184。评估器定位正确，标注偏早 2 步。",
+    "human_question": "第 9 步结构经核验无误，请确认 ProcessBench 标此步的依据（是否另有本次未察觉的问题）。"
+  }
+}
