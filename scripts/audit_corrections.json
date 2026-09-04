@@ -1,0 +1,49 @@
+{
+  "_readme": "人工抽检确认后对原标注的修正。source=human_verdict in results/runs/run-20260903T141258Z/audit_sheet.csv。action: relabel=改写原标注（标注有误），exclude=按本项目判定准则剔除（准则差异，双方都不算错）。未列出的样本一律保留原标注不动。",
+  "_policy": {
+    "incomplete_argument_counts_as_error": false,
+    "note": "口径决定（人工）：不将「未证唯一性 / 论证不完整」计入过程错误。本项目只标注步骤内的实质错误。因此该类分歧从统计中剔除，而非计入误报或漏报。"
+  },
+  "corrections": {
+    "processbench-olympiadbench-olympiadbench-892": {
+      "action": "relabel",
+      "process_correct": false,
+      "first_error_step": 2,
+      "label_class": "E9",
+      "human_note": "「每9项循环」不成立：k² mod 10 的周期为10；后续正确末位属数值巧合，评估器实质判断正确。",
+      "effect": "原标注「过程无误」有误。该条从误报池移入有误池，且属 E9。"
+    },
+    "processbench-gsm8k-gsm8k-307": {
+      "action": "relabel",
+      "process_correct": true,
+      "first_error_step": null,
+      "label_class": "CLEAN_CORRECT",
+      "human_note": "第2步 50/2=25、50+25=75 均正确；ProcessBench 标注错误。",
+      "effect": "原标注「第2步首错」有误。该条从有误池（记为漏报）移入无误池，且评估器判无误，不构成误报。"
+    },
+    "processbench-olympiadbench-olympiadbench-249": {
+      "action": "relabel",
+      "process_correct": false,
+      "first_error_step": 11,
+      "human_note": "第9步通分结构正确；第11步把 (2√2023)² 误算为 8×2023，评估器定位正确。",
+      "effect": "标注首错偏早2步。修正后评估器为精确命中。"
+    },
+    "processbench-olympiadbench-olympiadbench-691": {
+      "action": "relabel",
+      "process_correct": false,
+      "first_error_step": 6,
+      "human_note": "b+c=-1 的整数有序对为40个（c=-20…19），第6步的41错误；评估器定位正确。",
+      "effect": "标注首错偏晚1步。修正后评估器为精确命中。"
+    },
+    "processbench-olympiadbench-olympiadbench-851": {
+      "action": "exclude",
+      "human_note": "口径决定：不将「未证唯一性/论证不完整」计入过程错误；本项目仅标注步骤内实质错误，故本条为准则差异并从误报统计剔除。",
+      "effect": "准则差异，双方都不算错。从误报池剔除。"
+    },
+    "processbench-math-math-912": {
+      "action": "exclude",
+      "human_note": "第3步「加上下垂量」表述含混，但随后的两段直线计算为标准模型且正确；按仅标实质步骤错误的口径列为准则差异。",
+      "effect": "准则差异（表述含混 vs 实质错误）。从有误池剔除，不计为漏报。"
+    }
+  }
+}
