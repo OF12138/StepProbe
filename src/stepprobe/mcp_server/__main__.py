@@ -127,6 +127,32 @@ def build_server():
         """导出结果表格（kind=summary）或人工抽检清单（kind=human_audit）。"""
         return tools.report_export(run_id, kind)
 
+    @mcp.tool()
+    def p6_next_batch(
+        n: int = 20,
+        tier: str | None = None,
+        arm: str = "max_off",
+        run_id: str | None = None,
+    ) -> dict:
+        """取一批 P6 消融题目。**不返回标准答案** —— 解题时看到答案则本轮作废。
+
+        Args:
+            n: 题目数量
+            tier: 难度层 T1/T2/T3/T4，留空则不限
+            arm: max_on / max_off，对应 Max Mode 开与关两个实验臂
+            run_id: 续用已有运行；留空则新建
+        """
+        return tools.p6_next_batch(n=n, tier=tier, arm=arm, run_id=run_id)
+
+    @mcp.tool()
+    def p6_record(run_id: str, arm: str, solution: dict) -> dict:
+        """记录一条 P6 解答。
+
+        solution 需含 problem_id、steps（1-based 步骤文本列表）、final_answer。
+        解不出来时 final_answer 填 null，不要编造。
+        """
+        return tools.p6_record(run_id, arm, solution)
+
     return mcp
 
 

@@ -74,7 +74,7 @@ def dataset_next_batch(
 
 
 def _has_batch(run_id: str) -> bool:
-    return (store.run_dir(run_id) / "batch.json").exists()
+    return (store.run_dir(run_id, create=False) / "batch.json").exists()
 
 
 # ---------------------------------------------------------------------------
@@ -215,7 +215,7 @@ def report_export(run_id: str | None = None, kind: str = "summary") -> dict:
             "n_rows": len(rows),
             "by_disagreement_kind": dict(by_kind),
             "path": str(path),
-            "csv": str(store.run_dir(resolved) / "audit_sheet.csv"),
+            "csv": str(store.run_dir(resolved, create=False) / "audit_sheet.csv"),
             "note": (
                 "请人工在 human_verdict 列填写：评估器正确 / 评估器错误 / 标注有误。"
                 "0 行说明评估器与人工标注完全一致，属正常结果，不是导出失败。"
@@ -331,6 +331,72 @@ def _write_audit_csv(run_id: str, rows: list[dict]) -> None:
 # 工具清单（供 __main__ 注册与测试引用）
 # ---------------------------------------------------------------------------
 
+
+
+# ---------------------------------------------------------------------------
+# P6：Max Mode 消融
+# ---------------------------------------------------------------------------
+
+#: 合法的实验臂
+P6_ARMS = ("max_on", "max_off")
+
+
+def p6_next_batch(
+    n: int = 20,
+    tier: str | None = None,
+    arm: str = "max_off",
+    run_id: str | None = None,
+) -> dict:
+    """取一批 P6 题目。**不返回标准答案。**
+
+    P6 要把「Max Mode 让推导更严谨」和「Max Mode 只是让答案更容易蒙对」分开，
+    因此必须同时测答案正确率与过程正确率。前者要求解题时**看不到标准答案** ——
+    否则这一轮的答案正确率毫无意义。
+
+    标准答案留在服务端，只在 `p6_score` 阶段参与比对。这与
+    `dataset_next_batch` 剥离 label 是同一条纪律。
+
+    两个 arm 拿到的是**同一批题目**（同一 run_id 下按 tier 顺序稳定切片），
+    这样才能做同题配对对比。
+    """
+    if arm not in P6_ARMS:
+        return {"error": f"arm 必须是 {P6_ARMS} 之一，收到 {arm!r}"}
+
+    problems = store.load_p6_problems()
+    pool = [p for p in problems if tier is None or p["tier"] == tier]
+    if not pool:
+        return {"error": f"没有匹配的题目（tier={tier}）"}
+
+    run_id = run_id or store.new_run_id(prefix="p6")
+    done = {s["problem_id"] for s in store.read_solutions(run_id, arm)}
+    fresh = [p for p in sorted(pool, key=lambda d: d["id"]) if p["id"] not in done]
+    picked = fresh[:n]
+
+    return {
+        "run_id": run_id,
+        "arm": arm,
+        "n": len(picked),
+        "remaining": len(fresh) - len(picked),
+        "problems": [{k: p[k] for k in store.P6_SAFE_KEYS if k in p} for p in picked],
+    }
+
+
+def p6_record(run_id: str, arm: str, solution: dict) -> dict:
+    """落盘一条 P6 解答。
+
+    `solution` 需含 `problem_id`、`steps`（1-based 步骤文本列表）、`final_answer`。
+    解不出来时 `final_answer` 填 null —— 见 skills/solve「允许失败」。
+    """
+    if arm not in P6_ARMS:
+        return {"error": f"arm 必须是 {P6_ARMS} 之一，收到 {arm!r}"}
+    missing = [k for k in ("problem_id", "steps", "final_answer") if k not in solution]
+    if missing:
+        return {"error": f"solution 缺字段：{missing}"}
+
+    total = store.append_solution(run_id, arm, solution)
+    return {"run_id": run_id, "arm": arm, "recorded": total}
+
+
 TOOLS = {
     "dataset_next_batch": dataset_next_batch,
     "solution_segment": solution_segment,
@@ -340,4 +406,6 @@ TOOLS = {
     "verdict_record": verdict_record,
     "metrics_compute": metrics_compute,
     "report_export": report_export,
+    "p6_next_batch": p6_next_batch,
+    "p6_record": p6_record,
 }

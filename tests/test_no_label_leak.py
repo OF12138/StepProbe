@@ -115,9 +115,15 @@ def test_real_dataset_has_no_leak_after_stripping() -> None:
 
 
 @pytest.mark.skipif(not REAL_DATA.exists(), reason="需先运行 stepprobe.data.build")
-def test_real_batch_from_mcp_tool_has_no_leak(monkeypatch) -> None:
-    """走 MCP 工具的真实路径 —— 这是模型实际拿到的数据。"""
+def test_real_batch_from_mcp_tool_has_no_leak(monkeypatch, tmp_path) -> None:
+    """走 MCP 工具的真实路径 —— 这是模型实际拿到的数据。
+
+    数据用真的，结果目录必须用临时的：`dataset_next_batch` 会写 batch.json，
+    不隔离的话每跑一次测试就在 `results/runs/` 里落一个空运行目录，混进真实
+    评测记录里。
+    """
     monkeypatch.setenv("STEPPROBE_DATA_DIR", str(REAL_DATA.parent.resolve()))
+    monkeypatch.setenv("STEPPROBE_RESULTS_DIR", str(tmp_path / "results"))
     from stepprobe.mcp_server import store, tools
 
     store._CACHE.clear()

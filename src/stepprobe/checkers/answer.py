@@ -72,6 +72,61 @@ def _as_choice(text: str) -> str | None:
 
 
 # ---------------------------------------------------------------------------
+# 答案装饰的剥离
+# ---------------------------------------------------------------------------
+#
+# 同一个答案的写法差异极大。构建 P6 题目集时做了一次交叉印证（同一道题、
+# 两个模型各自写出的正确答案互相比对），23 处不一致里有 20 处根本不是答案不同，
+# 而是**装饰不同**：
+#
+#     x = \sqrt{2}   vs  \sqrt{2}          带变量名前缀
+#     f(x) = x + 22  vs  x + 22            带函数名前缀
+#     4^\circ        vs  4                 带角度单位
+#     17.5 \%        vs  17.5              带百分号
+#     1 \text{and} 3 vs  1, 3              用 and 而非逗号分隔
+#
+# 这类差异如果不处理，P6 里 Hy3 的答案会因为「写法不同」被大量误判为答错，
+# 答案正确率被系统性低估 —— 而 P6 恰恰要靠答案正确率与过程正确率的对比
+# 来回答「Max Mode 是让推导更严谨，还是只是让答案更容易蒙对」。
+#
+# **剥离是兜底，不是默认路径。** 先按原样比，判定 EQUAL 就直接返回；只有在
+# 原样比不出相等时才剥掉装饰重试。这样保证剥离只可能把「本该相等」救回来，
+# 不可能把「本来不等」洗成相等。
+
+#: 连接词当分隔符：1 and 3 → 1, 3
+_CONJUNCTION_RE = re.compile(r"\\text\s*\{\s*(and|or|、|和|或)\s*\}|\s+(and|or)\s+", re.IGNORECASE)
+
+#: 量纲 / 单位后缀。答案本身相等时这些不该造成差异。
+_UNIT_RE = re.compile(
+    r"\^\s*\{?\s*\\?(?:circ|degree)\s*\}?"      # 4^\circ / 4^{\circ}
+    r"|\\%|%"                                    # 17.5\% / 17.5%
+    r"|\\text\s*\{[^{}]*\}"                     # \text{ cm} 等单位
+    r"|\\,|\\;|\\!|\\quad|\\qquad"              # LaTeX 间距
+)
+
+#: 形如 "x =" / "f(x) =" / "\sin\theta =" 的左端前缀
+_LHS_PREFIX_RE = re.compile(
+    r"^\s*\\?[A-Za-z][A-Za-z0-9_]*"      # 变量名或 \sin 这类命令
+    r"(?:\s*_\s*\{?[A-Za-z0-9]+\}?)?"    # 下标
+    r"(?:\s*\\?[A-Za-z][A-Za-z0-9_]*)?"  # \sin \theta 这种两段
+    r"(?:\s*\([^()=]*\))?"               # 函数参数 f(x)
+    r"\s*=\s*(?!=)"
+)
+
+
+def _strip_decoration(text: str) -> str:
+    """剥掉不改变答案含义的装饰。仅供兜底比较使用。"""
+    s = _CONJUNCTION_RE.sub(", ", text)
+    s = _UNIT_RE.sub("", s)
+    # 只剥一层前缀，且剥完必须还剩东西、且不再含 "="
+    #（"x = 1, y = 2" 这类多变量答案剥了会变味，交给复合结构分支处理）
+    stripped = _LHS_PREFIX_RE.sub("", s, count=1)
+    if stripped.strip() and "=" not in stripped:
+        s = stripped
+    return s.strip()
+
+
+# ---------------------------------------------------------------------------
 # 第 2 / 3 级：符号与数值
 # ---------------------------------------------------------------------------
 
@@ -170,7 +225,47 @@ def check_answer(
     """比对预测答案与标准答案。
 
     返回 AnswerResult；无法判定时 verdict 为 UNKNOWN（不算错）。
+
+    原样比不出相等时，会剥掉答案装饰（变量名前缀、单位、连接词）重试一次 ——
+    见 `_strip_decoration` 的说明。**剥离只能把相等救回来，不能把不等洗成相等**。
     """
+    result = _check(pred, gold, samples=samples, tolerance=tolerance)
+    if result.verdict is Equivalence.EQUAL:
+        return result
+
+    sp, sg = _strip_decoration(pred or ""), _strip_decoration(gold or "")
+    if (sp, sg) == ((pred or "").strip(), (gold or "").strip()):
+        return result  # 没有装饰可剥，不必重试
+
+    retry = _check(sp, sg, samples=samples, tolerance=tolerance)
+    if retry.verdict is Equivalence.EQUAL:
+        return AnswerResult(
+            Equivalence.EQUAL,
+            f"{retry.level}/decoration",
+            f"剥离答案装饰后判定相等（{retry.detail}）",
+            normalized_pred=result.normalized_pred,
+            normalized_gold=result.normalized_gold,
+        )
+    # 剥离后仍不等 → 保留原判定；若原判定是 UNKNOWN 而剥离后能判不等，采用后者
+    if result.verdict is Equivalence.UNKNOWN and retry.verdict is Equivalence.NOT_EQUAL:
+        return AnswerResult(
+            Equivalence.NOT_EQUAL,
+            f"{retry.level}/decoration",
+            f"剥离答案装饰后判定不等（{retry.detail}）",
+            normalized_pred=result.normalized_pred,
+            normalized_gold=result.normalized_gold,
+        )
+    return result
+
+
+def _check(
+    pred: str | None,
+    gold: str | None,
+    *,
+    samples: int = DEFAULT_SAMPLES,
+    tolerance: float = DEFAULT_TOLERANCE,
+) -> AnswerResult:
+    """三级级联本体。装饰剥离由 `check_answer` 负责，这里不管。"""
     np_, ng = normalize(pred or ""), normalize(gold or "")
     base = {"normalized_pred": np_, "normalized_gold": ng}
 
