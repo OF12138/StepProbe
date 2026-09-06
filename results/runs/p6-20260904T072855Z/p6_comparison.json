@@ -13,22 +13,27 @@
       }
     },
     "max_on": {
-      "evaluated": 0,
+      "evaluated": 160,
       "total": 160,
-      "by_tier": {}
+      "by_tier": {
+        "T1": 40,
+        "T2": 40,
+        "T3": 40,
+        "T4": 40
+      }
     }
   },
-  "complete": false,
+  "complete": true,
   "cross_validated_only": false,
   "metrics": {
     "max_off": {
       "answer_accuracy": {
-        "value": 0.9675324675324676,
+        "value": 0.9805194805194806,
         "n": 154,
-        "k": 149,
+        "k": 151,
         "ci95": [
-          0.9262531770462376,
-          0.9860538446768062
+          0.9442956634972064,
+          0.9933532199403665
         ]
       },
       "process_validity": {
@@ -42,35 +47,41 @@
       },
       "e9_ratio_among_correct": {
         "value": 0.0,
-        "n": 149,
+        "n": 151,
         "k": 0,
         "ci95": [
           0.0,
-          0.025134518351024853
+          0.02480987021575597
         ]
       }
     },
     "max_on": {
       "answer_accuracy": {
-        "value": 0.948051948051948,
+        "value": 0.961038961038961,
         "n": 154,
-        "k": 146,
+        "k": 148,
         "ci95": [
-          0.9008488431490657,
-          0.9734453860021847
+          0.9176122901744271,
+          0.9820238006913521
         ]
       },
       "process_validity": {
-        "value": null,
-        "n": 0,
-        "k": 0,
-        "ci95": null
+        "value": 1.0,
+        "n": 160,
+        "k": 160,
+        "ci95": [
+          0.9765529633499672,
+          1.0
+        ]
       },
       "e9_ratio_among_correct": {
-        "value": null,
-        "n": 0,
+        "value": 0.0,
+        "n": 148,
         "k": 0,
-        "ci95": null
+        "ci95": [
+          0.0,
+          0.02530004952529478
+        ]
       }
     }
   },
@@ -91,21 +102,21 @@
   "answer_accuracy_by_tier": {
     "T1": {
       "max_off": {
-        "value": 0.975,
+        "value": 1.0,
         "n": 40,
-        "k": 39,
+        "k": 40,
         "ci95": [
-          0.8711834051199223,
-          0.9955732825922052
+          0.9123754607496077,
+          1.0
         ]
       },
       "max_on": {
-        "value": 0.975,
+        "value": 1.0,
         "n": 40,
-        "k": 39,
+        "k": 40,
         "ci95": [
-          0.8711834051199223,
-          0.9955732825922052
+          0.9123754607496077,
+          1.0
         ]
       }
     },
@@ -131,21 +142,21 @@
     },
     "T3": {
       "max_off": {
+        "value": 0.9743589743589743,
+        "n": 39,
+        "k": 38,
+        "ci95": [
+          0.8681871352137286,
+          0.9954594139347627
+        ]
+      },
+      "max_on": {
         "value": 0.9487179487179487,
         "n": 39,
         "k": 37,
         "ci95": [
           0.8311406095436208,
           0.9858223423536004
-        ]
-      },
-      "max_on": {
-        "value": 0.9230769230769231,
-        "n": 39,
-        "k": 36,
-        "ci95": [
-          0.7967862687194474,
-          0.9734930859265043
         ]
       }
     },
@@ -180,7 +191,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-001": {
@@ -192,7 +203,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-002": {
@@ -204,7 +215,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-003": {
@@ -216,7 +227,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-004": {
@@ -228,7 +239,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-005": {
@@ -240,7 +251,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-006": {
@@ -252,7 +263,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-007": {
@@ -264,7 +275,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-008": {
@@ -276,7 +287,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-009": {
@@ -288,7 +299,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-010": {
@@ -300,7 +311,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-011": {
@@ -312,7 +323,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-012": {
@@ -324,7 +335,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-013": {
@@ -336,7 +347,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-014": {
@@ -348,19 +359,19 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-015": {
       "tier": "T1",
       "n_agree": 1,
       "max_off": {
-        "answer_correct": false,
+        "answer_correct": true,
         "process_valid": true
       },
       "max_on": {
-        "answer_correct": false,
-        "process_valid": null
+        "answer_correct": true,
+        "process_valid": true
       }
     },
     "p6-t1-016": {
@@ -372,7 +383,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-017": {
@@ -384,7 +395,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-018": {
@@ -396,7 +407,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-019": {
@@ -408,7 +419,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-020": {
@@ -420,7 +431,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-021": {
@@ -432,7 +443,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-022": {
@@ -444,7 +455,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-023": {
@@ -456,7 +467,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-024": {
@@ -468,7 +479,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-025": {
@@ -480,7 +491,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-026": {
@@ -492,7 +503,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-027": {
@@ -504,7 +515,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-028": {
@@ -516,7 +527,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-029": {
@@ -528,7 +539,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-030": {
@@ -540,7 +551,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-031": {
@@ -552,7 +563,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-032": {
@@ -564,7 +575,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-033": {
@@ -576,7 +587,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-034": {
@@ -588,7 +599,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-035": {
@@ -600,7 +611,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-036": {
@@ -612,7 +623,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-037": {
@@ -624,7 +635,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-038": {
@@ -636,7 +647,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t1-039": {
@@ -648,7 +659,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-000": {
@@ -660,7 +671,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-001": {
@@ -672,7 +683,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-002": {
@@ -684,7 +695,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-003": {
@@ -696,7 +707,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-004": {
@@ -708,7 +719,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-005": {
@@ -720,7 +731,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-006": {
@@ -732,7 +743,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-007": {
@@ -744,7 +755,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-008": {
@@ -756,7 +767,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-009": {
@@ -768,7 +779,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-010": {
@@ -780,7 +791,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-011": {
@@ -792,7 +803,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-012": {
@@ -804,7 +815,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-013": {
@@ -816,7 +827,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-014": {
@@ -828,7 +839,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-015": {
@@ -840,7 +851,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-016": {
@@ -852,7 +863,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-017": {
@@ -864,7 +875,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-018": {
@@ -876,7 +887,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-019": {
@@ -888,7 +899,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-020": {
@@ -900,7 +911,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-021": {
@@ -912,7 +923,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-022": {
@@ -924,7 +935,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-023": {
@@ -936,7 +947,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-024": {
@@ -948,7 +959,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-025": {
@@ -960,7 +971,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-026": {
@@ -972,7 +983,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-027": {
@@ -984,7 +995,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-028": {
@@ -996,7 +1007,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-029": {
@@ -1008,7 +1019,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-030": {
@@ -1020,7 +1031,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-031": {
@@ -1032,7 +1043,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-032": {
@@ -1044,7 +1055,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-033": {
@@ -1056,7 +1067,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-034": {
@@ -1068,7 +1079,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-035": {
@@ -1080,7 +1091,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-036": {
@@ -1092,7 +1103,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-037": {
@@ -1104,7 +1115,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-038": {
@@ -1116,7 +1127,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t2-039": {
@@ -1128,7 +1139,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-000": {
@@ -1140,7 +1151,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-001": {
@@ -1152,7 +1163,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-002": {
@@ -1164,19 +1175,19 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-003": {
       "tier": "T3",
       "n_agree": 1,
       "max_off": {
-        "answer_correct": false,
+        "answer_correct": true,
         "process_valid": true
       },
       "max_on": {
-        "answer_correct": false,
-        "process_valid": null
+        "answer_correct": true,
+        "process_valid": true
       }
     },
     "p6-t3-004": {
@@ -1188,7 +1199,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-005": {
@@ -1200,7 +1211,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-006": {
@@ -1212,7 +1223,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-007": {
@@ -1224,7 +1235,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-008": {
@@ -1236,7 +1247,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-009": {
@@ -1248,7 +1259,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-010": {
@@ -1260,7 +1271,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-011": {
@@ -1272,7 +1283,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-012": {
@@ -1284,7 +1295,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-013": {
@@ -1296,7 +1307,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-014": {
@@ -1308,7 +1319,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-015": {
@@ -1320,7 +1331,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-016": {
@@ -1332,7 +1343,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-017": {
@@ -1344,7 +1355,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-018": {
@@ -1356,7 +1367,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-019": {
@@ -1368,7 +1379,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-020": {
@@ -1380,7 +1391,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-021": {
@@ -1392,7 +1403,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-022": {
@@ -1404,7 +1415,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-023": {
@@ -1416,7 +1427,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-024": {
@@ -1428,7 +1439,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-025": {
@@ -1440,7 +1451,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-026": {
@@ -1452,7 +1463,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-027": {
@@ -1464,7 +1475,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-028": {
@@ -1476,7 +1487,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-029": {
@@ -1488,7 +1499,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-030": {
@@ -1500,7 +1511,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-031": {
@@ -1512,7 +1523,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-032": {
@@ -1524,7 +1535,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-033": {
@@ -1536,7 +1547,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-034": {
@@ -1548,7 +1559,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-035": {
@@ -1560,7 +1571,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-036": {
@@ -1572,7 +1583,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-037": {
@@ -1584,7 +1595,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-038": {
@@ -1596,7 +1607,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t3-039": {
@@ -1608,7 +1619,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-000": {
@@ -1620,7 +1631,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-001": {
@@ -1632,7 +1643,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-002": {
@@ -1644,7 +1655,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-003": {
@@ -1656,7 +1667,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-004": {
@@ -1668,7 +1679,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-005": {
@@ -1680,7 +1691,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-006": {
@@ -1692,7 +1703,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-007": {
@@ -1704,7 +1715,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-008": {
@@ -1716,7 +1727,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-009": {
@@ -1728,7 +1739,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-010": {
@@ -1740,7 +1751,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-011": {
@@ -1752,7 +1763,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-012": {
@@ -1764,7 +1775,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-013": {
@@ -1776,7 +1787,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-014": {
@@ -1788,7 +1799,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-015": {
@@ -1800,7 +1811,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-016": {
@@ -1812,7 +1823,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-017": {
@@ -1824,7 +1835,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-018": {
@@ -1836,7 +1847,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-019": {
@@ -1848,7 +1859,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-020": {
@@ -1860,7 +1871,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-021": {
@@ -1872,7 +1883,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-022": {
@@ -1884,7 +1895,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-023": {
@@ -1896,7 +1907,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-024": {
@@ -1908,7 +1919,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-025": {
@@ -1920,7 +1931,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-026": {
@@ -1932,7 +1943,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-027": {
@@ -1944,7 +1955,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-028": {
@@ -1956,7 +1967,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-029": {
@@ -1968,7 +1979,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-030": {
@@ -1980,7 +1991,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-031": {
@@ -1992,7 +2003,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-032": {
@@ -2004,7 +2015,7 @@
       },
       "max_on": {
         "answer_correct": null,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-033": {
@@ -2016,7 +2027,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-034": {
@@ -2028,7 +2039,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-035": {
@@ -2040,7 +2051,7 @@
       },
       "max_on": {
         "answer_correct": false,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-036": {
@@ -2052,7 +2063,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-037": {
@@ -2064,7 +2075,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-038": {
@@ -2076,7 +2087,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     },
     "p6-t4-039": {
@@ -2088,7 +2099,7 @@
       },
       "max_on": {
         "answer_correct": true,
-        "process_valid": null
+        "process_valid": true
       }
     }
   }

@@ -411,3 +411,29 @@ def test_set_builder_and_prose_answers_are_unknown_not_wrong(pred: str, gold: st
 def test_normalization_relaxations_never_manufacture_equality(pred: str, gold: str) -> None:
     """所有放宽都必须是单向的：能把「本该相等」救回来，不能把「本来不等」洗成相等。"""
     assert check_answer(pred, gold).verdict is Equivalence.NOT_EQUAL
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        ("10", "10 hours"),          # 裸写的单位词
+        ("2 hours", "2"),
+        ("-7, -1, 1, 7", "±1, ±7"),  # ± 记号与展开写法
+        ("1, -1", r"\pm 1"),
+    ],
+)
+def test_bare_units_and_plusminus(pred: str, gold: str) -> None:
+    assert check_answer(pred, gold).verdict is Equivalence.EQUAL
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        # 单位词用白名单而非「任何结尾的词」，否则这一条会被洗成相等
+        ("10 apples", "10 oranges"),
+        ("10", "11 hours"),
+        ("-7, -1, 1, 7", "±1, ±8"),
+    ],
+)
+def test_unit_and_plusminus_relaxations_stay_one_way(pred: str, gold: str) -> None:
+    assert check_answer(pred, gold).verdict is Equivalence.NOT_EQUAL

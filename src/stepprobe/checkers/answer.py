@@ -104,6 +104,21 @@ _UNIT_RE = re.compile(
     r"|\\,|\\;|\\!|\\quad|\\qquad"              # LaTeX 间距
 )
 
+#: 裸写的单位词。**白名单而非「任何结尾的词」** —— 后者会把
+#: `10 apples` 与 `10 oranges` 洗成相等。这些是 GSM8K / MATH 里实际出现的量纲。
+_BARE_UNIT_RE = re.compile(
+    r"\s*\b(?:"
+    r"hours?|hrs?|minutes?|mins?|seconds?|secs?|days?|weeks?|months?|years?"
+    r"|degrees?|radians?"
+    r"|cm|mm|km|m|meters?|metres?|inches|inch|feet|foot|ft|yards?|miles?|mph"
+    r"|grams?|kg|kilograms?|pounds?|lbs?|ounces?|oz"
+    r"|dollars?|cents?|units?|points?|times|percent"
+    r"|square\s+\w+|cubic\s+\w+"
+    r"|小时|分钟|秒|天|周|个?月|年|度|米|厘米|千米|公里|元|个"
+    r")\b\.?\s*$",
+    re.IGNORECASE,
+)
+
 #: 形如 "x =" / "f(x) =" / "\sin\theta =" 的左端前缀
 _LHS_PREFIX_RE = re.compile(
     r"^\s*\\?[A-Za-z][A-Za-z0-9_]*"      # 变量名或 \sin 这类命令
@@ -114,10 +129,17 @@ _LHS_PREFIX_RE = re.compile(
 )
 
 
+#: ±x / \pm x → 展开成 x, -x。`±1, ±7` 与 `-7, -1, 1, 7` 是同一个解集，
+#: 不展开就会比出「分量个数不同」（2 vs 4）而判定答错。
+_PLUSMINUS_RE = re.compile(r"(?:±|\\pm)\s*([0-9A-Za-z\\{}^_./]+)")
+
+
 def _strip_decoration(text: str) -> str:
     """剥掉不改变答案含义的装饰。仅供兜底比较使用。"""
-    s = _CONJUNCTION_RE.sub(", ", text)
+    s = _PLUSMINUS_RE.sub(lambda m: f"{m.group(1)}, -{m.group(1)}", text)
+    s = _CONJUNCTION_RE.sub(", ", s)
     s = _UNIT_RE.sub("", s)
+    s = _BARE_UNIT_RE.sub("", s)
     # 只剥一层前缀，且剥完必须还剩东西、且不再含 "="
     #（"x = 1, y = 2" 这类多变量答案剥了会变味，交给复合结构分支处理）
     stripped = _LHS_PREFIX_RE.sub("", s, count=1)
