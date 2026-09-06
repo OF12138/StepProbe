@@ -130,17 +130,85 @@ def _strip_decoration(text: str) -> str:
 # 第 2 / 3 级：符号与数值
 # ---------------------------------------------------------------------------
 
+#: 集合构造式与自然语言描述的标志。命中时本工具无权判「不等」。
+_DECLARATIVE_RE = re.compile(
+    r"\\mid|\\in\b|\\text\s*\{|(?<![<>=!])\|(?!\|)"      # {x | P(x)}、\mid、\in
+    r"|\bsuch\s+that\b|\bfor\s+(?:any|all|every)\b|\bwhere\b|\bexcept\b"
+    r"|\ball\s+(?:positive\s+|non-?negative\s+)?integers?\b"
+    r"|\bif\s+and\s+only\s+if\b|\bi\.e\.|\bany\b.*\binteger\b"
+    r"|[，。、]|\b满足\b|所有|任意",
+    re.IGNORECASE,
+)
+
+
+def _is_declarative(text: str) -> bool:
+    """答案是不是「一句描述」而非一个可比较的值。
+
+    `{n : n >= 1, n != 2}` 会被当成三分量的元组，与标准答案的
+    `\\{n \\mid n \\geq 1 \\text{ and } n \\neq 2\\}` 比出「分量个数不同」，
+    然后**自信地判定答错** —— 而两者其实是同一个集合。
+
+    这类答案本工具判不了，正确的输出是 UNKNOWN（不进准确率分母），不是
+    NOT_EQUAL。区别很实在：P6 里两臂的书写风格不同，一臂写 ASCII 集合构造式、
+    另一臂写自然语言，前者被判「错」、后者被判「未知」，一个进分母一个不进 ——
+    凭空造出一个配对差分。
+
+    只用于把 NOT_EQUAL 降级为 UNKNOWN，绝不用于制造相等。
+    """
+    return bool(_DECLARATIVE_RE.search(text))
+
+
+def _encloses_whole(s: str) -> bool:
+    """首尾括号是否真的是一对、且包住了整个串。
+
+    `(a,b), (c,d)` 也以 `(` 开头、`)` 结尾，但那是两个并列的元组 —— 按首尾字符
+    判断会把它剥成 `a,b), (c,d`，之后所有分量都是错的。这类多解答案在竞赛题里
+    很常见，剥错了就变成「分量个数不同」，判成答错。
+    """
+    pairs = {")": "(", "]": "["}
+    if not s or s[0] not in "([" or s[-1] not in ")]":
+        return False
+    if pairs.get(s[-1]) != s[0]:
+        return False
+    depth = 0
+    for i, ch in enumerate(s):
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth -= 1
+            if depth == 0 and i != len(s) - 1:
+                return False  # 首括号在中途就闭合了
+    return depth == 0
+
+
+def _split_top_level(s: str) -> list[str]:
+    """只在最外层（括号深度 0）按 , 或 ; 切分。"""
+    parts, buf, depth = [], [], 0
+    for ch in s:
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(0, depth - 1)
+        if ch in ",;" and depth == 0:
+            parts.append("".join(buf))
+            buf = []
+        else:
+            buf.append(ch)
+    parts.append("".join(buf))
+    return [p.strip() for p in parts]
+
+
 def _split_tuple(text: str) -> list[str] | None:
-    """把 (1, 2)、{1,2,3}、1;2 拆成分量。不是复合结构返回 None。"""
+    """把 (1, 2)、{1,2,3}、1;2 拆成分量。不是复合结构返回 None。
+
+    嵌套结构按**最外层**切：`(1,2), (3,4)` 得到两个元组，而不是四个数。
+    分量之间的比较是递归的，所以嵌套多深都能处理。
+    """
     s = normalize(text)
     if not s:
         return None
-    inner = s
-    if (s.startswith("(") and s.endswith(")")) or (s.startswith("[") and s.endswith("]")):
-        inner = s[1:-1]
-    if "," not in inner and ";" not in inner:
-        return None
-    parts = [p.strip() for p in re.split(r"[,;]", inner)]
+    inner = s[1:-1] if _encloses_whole(s) else s
+    parts = _split_top_level(inner)
     return parts if len(parts) > 1 and all(parts) else None
 
 
@@ -229,6 +297,29 @@ def check_answer(
     原样比不出相等时，会剥掉答案装饰（变量名前缀、单位、连接词）重试一次 ——
     见 `_strip_decoration` 的说明。**剥离只能把相等救回来，不能把不等洗成相等**。
     """
+    result = _with_decoration_retry(pred, gold, samples=samples, tolerance=tolerance)
+    # 统一出口降级。放在这里而不是各分支里：装饰剥离那条路会把 UNKNOWN
+    # 升级成 NOT_EQUAL，早退的守卫盖不住它。
+    if result.verdict is Equivalence.NOT_EQUAL and (
+        _is_declarative(pred or "") or _is_declarative(gold or "")
+    ):
+        return AnswerResult(
+            Equivalence.UNKNOWN,
+            result.level,
+            f"集合构造式或自然语言描述，本工具无权判定不等（原判定：{result.detail}）",
+            normalized_pred=result.normalized_pred,
+            normalized_gold=result.normalized_gold,
+        )
+    return result
+
+
+def _with_decoration_retry(
+    pred: str | None,
+    gold: str | None,
+    *,
+    samples: int = DEFAULT_SAMPLES,
+    tolerance: float = DEFAULT_TOLERANCE,
+) -> AnswerResult:
     result = _check(pred, gold, samples=samples, tolerance=tolerance)
     if result.verdict is Equivalence.EQUAL:
         return result

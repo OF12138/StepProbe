@@ -339,3 +339,75 @@ def test_multi_variable_answer_keeps_its_equals_signs() -> None:
 
     assert _strip_decoration("x = 1, y = 2") == "x = 1, y = 2"
     assert check_answer("x = 1, y = 2", "x = 1, y = 2").correct
+
+
+# ---------------------------------------------------------------------------
+# 答案归一化：从 P6 两臂对比里捞出来的四个 bug
+# ---------------------------------------------------------------------------
+#
+# 这四条都不会报错，只会让「同一个答案的两种写法」被判成不等。放在 P6 里就是
+# 凭空造出配对差分 —— 而 160 道题只产生 10 条差分，噪声占了 7 条，McNemar
+# 检验测的基本是格式而不是模型。
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold", "why"),
+    [
+        # 1) 千位分隔符规则误吃元组里的逗号：(3,331) → 3331，而 (3, 331) 因为
+        #    有空格逃过。同一个答案的两种写法被判成不等。
+        ("(1,1006), (3,331), (11,31)", "(1, 1006), (3, 331), (11, 31)", "元组内逗号"),
+        # 2) `\b` 在 g 与 _ 之间不成立，`\log_{10}` 的 \log 被当未识别命令删掉
+        ("(4, log_10(2))", r"(4, \log_{10}(2))", "带下标的函数名"),
+        ("x_1 + x_2", r"x_{1} + x_{2}", "简单下标花括号"),
+        # 3) 首尾字符判包裹：`(a,b), (c,d)` 被剥成 `a,b), (c,d`，分量全错
+        (
+            "(22 + 8*sqrt(6), 22 - 8*sqrt(6)), (22 - 8*sqrt(6), 22 + 8*sqrt(6))",
+            r"(22 + 8\sqrt{6}, 22 - 8\sqrt{6}) \text{ and } (22 - 8\sqrt{6}, 22 + 8\sqrt{6})",
+            "并列元组",
+        ),
+    ],
+)
+def test_same_answer_written_differently_is_equal(pred: str, gold: str, why: str) -> None:
+    assert check_answer(pred, gold).verdict is Equivalence.EQUAL, why
+
+
+def test_thousands_separator_still_stripped_outside_brackets() -> None:
+    """修元组不能把千位分隔符本身修没了。"""
+    assert check_answer("1,234", "1234").verdict is Equivalence.EQUAL
+    assert check_answer("1,234,567", "1234567").verdict is Equivalence.EQUAL
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        ("{n : n >= 1, n != 2}", r"\{n \mid n \geq 1 \text{ and } n \neq 2\}"),
+        ("{2^r | r in Z^+}", r"\{2^r \mid r \in \mathbb{Z}^+\}"),
+        ("f(x) = c x (c positive integer)", r"f(x) = cx \text{ for any positive integer } c"),
+    ],
+)
+def test_set_builder_and_prose_answers_are_unknown_not_wrong(pred: str, gold: str) -> None:
+    """判不了就说判不了，不要自信地判错。
+
+    `{n : n >= 1, n != 2}` 会被当成三分量元组，与标准答案比出「分量个数不同」
+    然后判定答错 —— 但两者是同一个集合。UNKNOWN 不进准确率分母，NOT_EQUAL 进，
+    这个区别在 P6 里是实打实的偏置：一臂写 ASCII 集合式被判「错」，另一臂写
+    自然语言被判「未知」，一个进分母一个不进。
+    """
+    assert check_answer(pred, gold).verdict is Equivalence.UNKNOWN
+
+
+@pytest.mark.parametrize(
+    ("pred", "gold"),
+    [
+        ("4", "5"),
+        ("1, 3", "1, 4"),
+        ("(1,2)", "(1,3)"),
+        ("4.0", "4.2"),
+        ("x = 3", "4"),
+        ("567", r"\frac{567}{4}"),
+        ("(1,1006), (3,331)", "(1, 1007), (3, 331)"),
+    ],
+)
+def test_normalization_relaxations_never_manufacture_equality(pred: str, gold: str) -> None:
+    """所有放宽都必须是单向的：能把「本该相等」救回来，不能把「本来不等」洗成相等。"""
+    assert check_answer(pred, gold).verdict is Equivalence.NOT_EQUAL

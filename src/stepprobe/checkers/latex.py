@@ -213,6 +213,35 @@ def _expand_sqrt(text: str) -> str:
     return text
 
 
+def _strip_thousands(s: str) -> str:
+    """去掉千位分隔符，**但只在括号外**。
+
+    「前后都是数字」这个条件挡不住元组：`(3,331)` 里 331 恰好三位，逗号被当成
+    千位分隔符吃掉，整个分量变成 `3331`。而写成 `(3, 331)` 的同一个答案因为有
+    空格逃过了这条规则 —— 于是同一个答案的两种写法被判成不相等。
+
+    这个 bug 是在 P6 的两臂对比里露出来的：一臂写 `(1, 1006), (3, 331)`，
+    另一臂写 `(1,1006), (3,331)`，纯空格差异被判成答错。它不会报错，只会让
+    答案正确率的配对差分里混进噪声。
+
+    括号内的逗号几乎总是分隔符（元组、集合、多解），千位分隔符则几乎总是出现在
+    独立的数字里。按括号深度区分，比按空格区分可靠得多。
+    """
+    out, depth = [], 0
+    for i, ch in enumerate(s):
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(0, depth - 1)
+        elif ch == "," and depth == 0:
+            before = s[i - 1] if i else ""
+            after = s[i + 1 : i + 5]
+            if before.isdigit() and re.fullmatch(r"\d{3}", after[:3] or "") and not after[3:4].isdigit():
+                continue  # 丢掉这个逗号
+        out.append(ch)
+    return "".join(out)
+
+
 def normalize(text: str) -> str:
     """把一段 LaTeX / 自由文本规范化为 SymPy 友好的表达式串。"""
     if text is None:
@@ -237,10 +266,17 @@ def normalize(text: str) -> str:
     # 4) 希腊字母与函数名去掉反斜杠
     s = re.sub(r"\\ln\b", "log", s)
     for name in _GREEK + _FUNCS:
-        s = re.sub(r"\\" + name + r"\b", name, s)
+        # 用 (?![a-zA-Z]) 而不是 \b：`\log_{10}` 里 g 与 _ 之间不是词边界
+        #（`_` 也是词字符），\b 匹配不上，于是 `\log` 在第 6 步被当作未识别命令
+        # 整个删掉，`\log_{10}(2)` 变成 `_(10)(2)`。所有带下标的函数都中这一枪。
+        s = re.sub(r"\\" + name + r"(?![a-zA-Z])", name, s)
 
-    # 5) 千位分隔符 1,234 → 1234（前后都是数字才算，避免误伤元组 (1, 2)）
-    s = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", s)
+    # 4b) 简单下标去花括号：x_{10} → x_10。留着的话第 6 步会把它变成 x_(10)，
+    #     与手写的 x_10 判成不等 —— 纯写法差异。
+    s = re.sub(r"_\s*\{\s*([A-Za-z0-9]+)\s*\}", r"_\1", s)
+
+    # 5) 千位分隔符 1,234 → 1234
+    s = _strip_thousands(s)
 
     # 6) 清掉残留的未识别命令与花括号
     s = re.sub(r"\\[a-zA-Z]+", " ", s)
