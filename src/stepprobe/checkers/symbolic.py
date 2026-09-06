@@ -156,6 +156,24 @@ def _is_integer_division(lhs: str, rhs: str) -> bool:
     return b != 0 and a % b != 0 and a // b == quotient
 
 
+#: 进制标注：324_8、212_{10}、111010101110_2
+_BASE_NOTATION_RE = re.compile(r"\d\s*_\s*\{?\s*\d{1,2}\s*\}?(?![0-9])")
+
+
+def _has_base_notation(text: str) -> bool:
+    """识别 `324_8`、`212_{10}` 这类进制标注。
+
+    下标在这里不是下标，是**进制** —— `212_{10}` 读作「十进制的 212」。
+    SymPy 不理解这个语义，把它当成一个符号或乘法，判出来的对错没有意义：
+    `192 + 16 + 4 = 212_{10}` 数学上成立，却会被判 FALSE。
+
+    进制转换题在 MATH / OlympiadBench 里成批出现（一道题里每一步都带标注），
+    所以一旦误判就是**成串**的误报，而不是零星一条。L1 的立论是「触发时几乎
+    不会错」，这类语义读不懂的记号必须让给 L2，而不是硬判。
+    """
+    return bool(_BASE_NOTATION_RE.search(text))
+
+
 def _closed_form_verdict(a, b, rounding_tol: float) -> StepVerdictValue:
     """两侧均为闭式数值时的判定，带截断小数容差。"""
     try:
@@ -201,6 +219,11 @@ def check_equation(lhs: str, rhs: str) -> EquationCheck:
     if _is_integer_division(lhs, rhs):
         return EquationCheck(
             lhs, rhs, StepVerdictValue.UNKNOWN, "整除取整惯用法（商已隐含舍去余数）"
+        )
+
+    if _has_base_notation(lhs) or _has_base_notation(rhs):
+        return EquationCheck(
+            lhs, rhs, StepVerdictValue.UNKNOWN, "含进制标注，SymPy 不理解其语义"
         )
 
     if not has_symbols:

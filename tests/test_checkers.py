@@ -437,3 +437,39 @@ def test_bare_units_and_plusminus(pred: str, gold: str) -> None:
 )
 def test_unit_and_plusminus_relaxations_stay_one_way(pred: str, gold: str) -> None:
     assert check_answer(pred, gold).verdict is Equivalence.NOT_EQUAL
+
+
+# ---------------------------------------------------------------------------
+# 进制标注：L1 不该判它
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("lhs", "rhs"),
+    [
+        ("192 + 16 + 4", "212_{10}"),                          # 数学上成立
+        ("2048 + 1024 + 512 + 128 + 32 + 8 + 4 + 2", "3758_{10}"),
+        ("212 + 3758", "3970_{10}"),
+        ("21 \times 5", "105_{10}"),
+        ("3 \cdot 8^2 + 2 \cdot 8^1 + 4 \cdot 8^0", "324_8"),  # 进制转换，两侧语义不同
+    ],
+)
+def test_base_notation_is_not_judged_by_l1(lhs: str, rhs: str) -> None:
+    r"""`212_{10}` 里的下标是**进制**不是下标，SymPy 读不懂它的语义。
+
+    这是回归测试：为了让 `\log_{10}(2)` 与 `log_10(2)` 判等，normalize 加了
+    `_{X}` → `_X`，副作用是进制标注从「解析失败落到 UNKNOWN」变成「能解析并
+    判 FALSE」。进制转换题里每一步都带标注，所以误判是**成串**的 —— 全抽样集
+    上 L1 误报率一度从 3.6% 升到 10.0%。
+
+    L1 的立论是「触发时几乎不会错」，语义读不懂的记号必须让给 L2。
+    """
+    assert check_equation(lhs, rhs).verdict is StepVerdictValue.UNKNOWN
+
+
+def test_base_notation_exemption_does_not_swallow_real_errors() -> None:
+    """豁免只针对带进制标注的等式，不带标注的算错照判。"""
+    assert check_equation("192 + 16 + 5", "212").verdict is StepVerdictValue.FALSE
+    assert check_equation("2+3", "6").verdict is StepVerdictValue.FALSE
+    # 下标是真下标（变量）时不受影响
+    assert check_equation("x_1 + x_1", "2*x_1").verdict is StepVerdictValue.TRUE

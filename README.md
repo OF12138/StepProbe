@@ -329,7 +329,7 @@ stepprobe/
 │   ├── build_p6_set.py       # 反推标准答案，构建 P6 题目集
 │   ├── p6_check.py          # P6 运行体检：进度 + 格式
 │   └── p6_score.py           # Max Mode 同题配对评分
-├── tests/                    # 144 项
+├── tests/                    # 191 项
 ├── data/                     # 规整后的评测数据（不入库）
 ├── results/runs/<run_id>/    # 每次运行的批次、评判、指标、报告、抽检表
 └── docs/
@@ -343,7 +343,7 @@ stepprobe/
 
 ## 12. 项目状态
 
-> **P1–P7 已完成，通过 185 项测试。** 仅剩 P8 录屏。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)，分析结论见 [`docs/report.md`](docs/report.md)。
+> **P1–P7 已完成，通过 191 项测试。** 仅剩 P8 录屏。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)，分析结论见 [`docs/report.md`](docs/report.md)。
 
 | 模块 | 状态 |
 |---|---|
@@ -351,7 +351,7 @@ stepprobe/
 | 数据说明与抽样方案 | ✅ 已完成 |
 | 评估方法与提示词设计 | ✅ 已完成 |
 | 数据管线（P1） | ✅ 已完成 |
-| L1 确定性校验器（P2） | ✅ 已完成，实测误报率 3.6% |
+| L1 确定性校验器（P2） | ✅ 已完成，实测误报率 3.7%（1/27） |
 | MCP Server（P3，10 个工具） | ✅ 已完成 |
 | solve / evaluate / validate / ablate Skills | ✅ 已完成 |
 | 有效性验证实验（P5） | ✅ n=60，检出率 0.857、误报率 0/23（人工抽检修正后） |
