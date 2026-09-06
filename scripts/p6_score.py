@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from stepprobe.checkers.answer import Equivalence, check_answer
@@ -151,6 +151,23 @@ def main(argv: list[str] | None = None) -> int:
             }
         per_problem[pid] = row
 
+    # 评估覆盖度。中途跑这个脚本会得到一份**看起来和最终版一模一样**的报告，
+    # 只是过程类指标其实只覆盖了已评估的那一部分 —— 而已评估的部分通常还是按
+    # tier 顺序来的，也就是系统性偏易。所以让报告自己声明不完整。
+    evaluated = {
+        arm: [pid for pid, r in per_problem.items() if r[arm]["process_valid"] is not None]
+        for arm in ARMS
+    }
+    coverage = {
+        arm: {
+            "evaluated": len(evaluated[arm]),
+            "total": len(per_problem),
+            "by_tier": dict(sorted(Counter(per_problem[p]["tier"] for p in evaluated[arm]).items())),
+        }
+        for arm in ARMS
+    }
+    complete = all(c["evaluated"] == len(per_problem) for c in coverage.values())
+
     def _prop(arm: str, field: str, want: bool = True) -> Proportion:
         vals = [r[arm][field] for r in per_problem.values() if r[arm][field] is not None]
         return Proportion(sum(1 for v in vals if v is want), len(vals))
@@ -200,6 +217,8 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "run_id": run_dir.name,
         "n_paired_problems": len(per_problem),
+        "verdict_coverage": coverage,
+        "complete": complete,
         "cross_validated_only": args.cross_validated_only,
         "metrics": metrics,
         "paired_tests": paired_tests,
@@ -222,6 +241,24 @@ def main(argv: list[str] | None = None) -> int:
         f"运行 `{run_dir.name}`，同题配对 {len(per_problem)} 道"
         + ("（仅标准答案有交叉印证的题）" if args.cross_validated_only else ""),
         "",
+    ]
+    if not complete:
+        md += [
+            "> ⚠️ **数据不完整，本表不可引用。** 过程成立率与 E9 比例只覆盖了"
+            f"已评估的部分（关 {coverage['max_off']['evaluated']}/{len(per_problem)}，"
+            f"开 {coverage['max_on']['evaluated']}/{len(per_problem)}），"
+            "且已评估的部分按 tier 顺序推进、系统性偏易。答案正确率不受影响。",
+            "",
+            "| tier | 已评估（关） | 已评估（开） |",
+            "| --- | --- | --- |",
+        ]
+        for tier in sorted({r["tier"] for r in per_problem.values()}):
+            md.append(
+                f"| {tier} | {coverage['max_off']['by_tier'].get(tier, 0)} "
+                f"| {coverage['max_on']['by_tier'].get(tier, 0)} |"
+            )
+        md.append("")
+    md += [
         "| 指标 | Max Mode 关 | Max Mode 开 |",
         "| --- | --- | --- |",
     ]
@@ -255,6 +292,12 @@ def main(argv: list[str] | None = None) -> int:
     ]
     (run_dir / "p6_comparison.md").write_text("\n".join(md), encoding="utf-8")
 
+    if not complete:
+        print(
+            f"⚠️ 评估未完成：关 {coverage['max_off']['evaluated']}/{len(per_problem)}，"
+            f"开 {coverage['max_on']['evaluated']}/{len(per_problem)}。"
+            "过程类指标只反映已评估部分，且偏易，不要引用。"
+        )
     print(f"同题配对 {len(per_problem)} 道")
     for name, key in (
         ("答案正确率", "answer_accuracy"),

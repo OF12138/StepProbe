@@ -122,6 +122,17 @@ p6_record(run_id="<RUN_ID>", arm="max_on", solution={...})。
 后续批次把 `solutions_max_off.jsonl` 换成 `solutions_max_on.jsonl`、`sample_id`
 前缀换成 `max_on:`，其余不变。两个文件各 8 批，共 16 批。
 
+**每隔几批在终端跑一次体检**，不要等 320 条全做完：
+
+```bash
+python scripts/p6_check.py --run <RUN_ID>
+```
+
+它查的是「已落盘的东西能不能被评分脚本正确归位」—— 前缀漏写、arm 写反、
+同一题重复评、判错没填 evidence。这几类都不会报错，只会让某一臂的样本数
+悄悄少一截；换文件那一步（`max_off` → `max_on`）尤其容易漂移。发现得早，
+返工的是几条；发现得晚，返工的是几十条人工评估。
+
 ---
 
 ### A4　评分
@@ -133,6 +144,11 @@ python scripts/p6_score.py --run <RUN_ID>
 ```
 
 产出 `p6_comparison.md`。把输出发我，我来写进报告。
+
+中途也可以跑，脚本会自己在报告开头标注「数据不完整、不可引用」并列出各 tier
+的评估覆盖度 —— 因为部分数据产出的报告和最终版格式完全一样，而评估按 tier
+顺序推进，中途的过程成立率系统性偏高。**答案正确率不受影响**，160 道题解完
+就已经是终值了。
 
 **怎么读**（`p6_comparison.md` 里也写了）：
 
@@ -232,8 +248,16 @@ python scripts/apply_audit.py --run <RUN_ID>   # 重算修正后指标
 `run_id` 下已经处理过的条目。中断后只要拿着同一个 `run_id` 重发对应的"续批"
 提示词即可，不会重复也不会漏。
 
-想确认进度：
+想确认进度（P6）：
 
 ```bash
-python -c "import json,glob; [print(f, sum(1 for _ in open(f,encoding='utf-8'))) for f in glob.glob('results/runs/<RUN_ID>/*.jsonl')]"
+python scripts/p6_check.py --run <RUN_ID>
+```
+
+会按 arm 和 tier 打印已完成数，并顺带做一遍格式体检。
+
+P5 那边直接看行数：
+
+```bash
+wc -l results/runs/<RUN_ID>/verdicts.jsonl
 ```

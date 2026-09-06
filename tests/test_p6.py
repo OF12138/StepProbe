@@ -25,6 +25,11 @@ p6_score = importlib.util.module_from_spec(_SPEC)
 assert _SPEC.loader is not None
 _SPEC.loader.exec_module(p6_score)
 
+_SPEC2 = importlib.util.spec_from_file_location("p6_check", ROOT / "scripts" / "p6_check.py")
+p6_check = importlib.util.module_from_spec(_SPEC2)
+assert _SPEC2.loader is not None
+_SPEC2.loader.exec_module(p6_check)
+
 _GOLD_TOKENS = ("gold_answer", "gold", "n_agree", "generators")
 
 
@@ -104,3 +109,83 @@ def test_unanswered_counts_as_wrong_not_as_missing(tmp_path: Path) -> None:
     assert p6_score._answer_correct(None, "5") is False
     assert p6_score._answer_correct("", "5") is False
     assert p6_score._answer_correct("5", "5") is True
+
+
+def _minimal_run(tmp_path: Path, verdicts: list[dict]) -> tuple[Path, Path]:
+    """两题两臂的最小运行，verdicts 由调用方决定覆盖到哪。"""
+    data = tmp_path / "data"
+    data.mkdir()
+    gold = [
+        {"id": "p0", "problem": "q", "tier": "T1", "gold_answer": "1", "n_agree": 1},
+        {"id": "p1", "problem": "q", "tier": "T4", "gold_answer": "2", "n_agree": 1},
+    ]
+    _write(data, "p6_problems.jsonl", gold)
+    run = tmp_path / "runs" / "p6-y"
+    run.mkdir(parents=True)
+    for arm in ("max_off", "max_on"):
+        _write(run, f"solutions_{arm}.jsonl", [
+            {"problem_id": g["id"], "steps": ["s"], "final_answer": g["gold_answer"]} for g in gold
+        ])
+    _write(run, "verdicts.jsonl", verdicts)
+    return run, data
+
+
+def test_partial_run_declares_itself_incomplete(tmp_path: Path) -> None:
+    """中途评分产出的报告必须自曝不完整。
+
+    守的是一个**看不出来的错**：评估做到一半跑评分，得到的
+    `p6_comparison.md` 与最终版格式完全一致，只是过程类指标仅覆盖已评估的
+    那部分 —— 而评估通常按 tier 顺序推进，已评估的部分系统性偏易。这种报告
+    一旦被引用，结论会朝「过程成立率很高」偏，且无从察觉。
+    """
+    run, data = _minimal_run(tmp_path, [
+        {"sample_id": "max_off:p0", "process_valid": True},
+    ])
+    p6_score.main(["--run", str(run), "--data-dir", str(data)])
+    out = json.loads((run / "p6_comparison.json").read_text(encoding="utf-8"))
+
+    assert out["complete"] is False
+    assert out["verdict_coverage"]["max_off"]["evaluated"] == 1
+    assert out["verdict_coverage"]["max_on"]["evaluated"] == 0
+    # 偏易必须体现在 tier 分布上，而不只是一个总数
+    assert out["verdict_coverage"]["max_off"]["by_tier"] == {"T1": 1}
+    md = (run / "p6_comparison.md").read_text(encoding="utf-8")
+    assert "不可引用" in md
+
+
+def test_complete_run_carries_no_warning(tmp_path: Path) -> None:
+    run, data = _minimal_run(tmp_path, [
+        {"sample_id": f"{arm}:{pid}", "process_valid": True}
+        for arm in ("max_off", "max_on")
+        for pid in ("p0", "p1")
+    ])
+    p6_score.main(["--run", str(run), "--data-dir", str(data)])
+    out = json.loads((run / "p6_comparison.json").read_text(encoding="utf-8"))
+
+    assert out["complete"] is True
+    assert "不可引用" not in (run / "p6_comparison.md").read_text(encoding="utf-8")
+
+
+def test_check_catches_the_drifts_that_scoring_would_swallow(tmp_path: Path) -> None:
+    """体检脚本必须抓住三类静默漂移。
+
+    这三类都不会让评分脚本报错，只会让某一臂的样本数悄悄少一截：
+    忘写 arm 前缀、把评判落到没有解答的题上、同一题重复落盘。
+    """
+    run, data = _minimal_run(tmp_path, [
+        {"sample_id": "p0", "process_valid": True},                    # 缺前缀
+        {"sample_id": "max_off:p9", "process_valid": True},            # 题号不存在
+        {"sample_id": "max_on:p1", "process_valid": True},
+        {"sample_id": "max_on:p1", "process_valid": True},             # 重复
+    ])
+    rc = p6_check.main(["--run", str(run), "--data-dir", str(data)])
+    assert rc == 1
+
+
+def test_check_passes_on_a_clean_run(tmp_path: Path) -> None:
+    run, data = _minimal_run(tmp_path, [
+        {"sample_id": f"{arm}:{pid}", "process_valid": True}
+        for arm in ("max_off", "max_on")
+        for pid in ("p0", "p1")
+    ])
+    assert p6_check.main(["--run", str(run), "--data-dir", str(data)]) == 0
