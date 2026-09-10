@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "stepprobe": {
+      "command": "python",
+      "args": ["-m", "stepprobe.mcp_server"],
+      "env": {
+        "STEPPROBE_DATA_DIR": "D:/path/to/StepProbe/data",
+        "STEPPROBE_RESULTS_DIR": "D:/path/to/StepProbe/results"
+      }
+    }
+  }
+}
