@@ -130,13 +130,13 @@ def main(argv: list[str] | None = None) -> int:
     if orphan:
         raise SystemExit(f"以下修正没有对应的人工结论：{sorted(orphan)}")
 
-    confirmed = [r for r in sheet if r["human_verdict"] == r["claude_suggestion"]]
+    confirmed = [r for r in sheet if r["human_verdict"] == r["pre_audit_verdict"]]
     overridden = [
         r for r in sheet
-        if r.get("human_verdict") and r["claude_suggestion"] != "needs_human"
-        and r["human_verdict"] != r["claude_suggestion"]
+        if r.get("human_verdict") and r["pre_audit_verdict"] != "needs_human"
+        and r["human_verdict"] != r["pre_audit_verdict"]
     ]
-    independent = [r for r in sheet if r["claude_suggestion"] == "needs_human" and r.get("human_verdict")]
+    independent = [r for r in sheet if r["pre_audit_verdict"] == "needs_human" and r.get("human_verdict")]
 
     verdicts = load_verdicts(run_dir)
     ids = {v.sample_id for v in verdicts}
@@ -172,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
         "",
         f"- 确认预审意见：**{len(confirmed)}** 条",
         f"- 推翻预审意见：**{len(overridden)}** 条"
-        + (f"（{', '.join(r['sample_id'] + '：' + r['claude_suggestion'] + ' → ' + r['human_verdict'] for r in overridden)}）" if overridden else ""),
+        + (f"（{', '.join(r['sample_id'] + '：' + r['pre_audit_verdict'] + ' → ' + r['human_verdict'] for r in overridden)}）" if overridden else ""),
         f"- 预审无法定论、由人工独立判断：**{len(independent)}** 条"
         + (f"（{', '.join(r['sample_id'] + ' → ' + r['human_verdict'] for r in independent)}）" if independent else ""),
         "",

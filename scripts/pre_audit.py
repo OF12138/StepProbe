@@ -6,7 +6,7 @@
 
 人工只需对每行确认或推翻，而不是从头读题重新分析。
 
-**诚实边界**：预审意见由 Claude 给出，不等于人工抽检结果。
+**诚实边界**：预审意见只是建议，不等于人工抽检结果。
 最终 CSV 保留独立的 `human_verdict` 列；报告中必须分别写明「人工确认了 N 条、
 推翻了 M 条」，不把预审冒充人工抽检。
 
@@ -14,7 +14,7 @@
 
 产出（写入该 run 目录）：
     audit_packets.md    每条分歧的完整判断包，供人工阅读
-    audit_sheet.csv     增加 claude_suggestion / claude_reason / claude_confidence 列
+    audit_sheet.csv     增加 pre_audit_verdict / pre_audit_reason / pre_audit_confidence 列
 """
 
 from __future__ import annotations
@@ -105,7 +105,7 @@ def build_packet(row: dict, sample: dict, suggestion: dict | None) -> str:
     lines.append("")
 
     if suggestion:
-        lines.append("### 预审意见（Claude，非人工抽检结果）")
+        lines.append("### 预审意见（非人工抽检结果）")
         lines.append("")
         lines.append(f"- 结论：**{suggestion['verdict']}**　置信度：{suggestion['confidence']}")
         lines.append(f"- 理由：{suggestion['reason']}")
@@ -127,7 +127,7 @@ FIELDS = [
     "disagreement_kind", "sample_id", "tier",
     "gold_process", "gold_step",
     "evaluator_process", "evaluator_step", "evaluator_error_type",
-    "claude_suggestion", "claude_confidence", "claude_reason",
+    "pre_audit_verdict", "pre_audit_confidence", "pre_audit_reason",
     "human_verdict", "human_note",
     "evidence", "step_content",
 ]
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
 
     packets = ["# 人工抽检判断包", "",
                f"运行：`{run_dir.name}`　共 {len(rows)} 条分歧", "",
-               "> 预审意见由 Claude 给出，**不等于人工抽检结果**。",
+               "> 预审意见只是建议，**不等于人工抽检结果**。",
                "> 请逐条确认或推翻，并把结论填进 `audit_sheet.csv` 的 `human_verdict` 列。", "",
                "---", ""]
     csv_rows = []
@@ -173,9 +173,9 @@ def main(argv: list[str] | None = None) -> int:
         csv_rows.append(
             {
                 **{k: row.get(k, "") for k in FIELDS if k in row},
-                "claude_suggestion": (sug or {}).get("verdict", ""),
-                "claude_confidence": (sug or {}).get("confidence", ""),
-                "claude_reason": (sug or {}).get("reason", ""),
+                "pre_audit_verdict": (sug or {}).get("verdict", ""),
+                "pre_audit_confidence": (sug or {}).get("confidence", ""),
+                "pre_audit_reason": (sug or {}).get("reason", ""),
                 "human_verdict": "",
                 "human_note": "",
             }
@@ -187,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
         writer.writeheader()
         writer.writerows(csv_rows)
 
-    by_sug = Counter(r["claude_suggestion"] or "（未预审）" for r in csv_rows)
+    by_sug = Counter(r["pre_audit_verdict"] or "（未预审）" for r in csv_rows)
     print(f"{len(csv_rows)} 条分歧 → {run_dir}")
     print(f"  audit_packets.md  判断包")
     print(f"  audit_sheet.csv   待人工填 human_verdict")

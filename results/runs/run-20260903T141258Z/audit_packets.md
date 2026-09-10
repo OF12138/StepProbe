@@ -2,7 +2,7 @@
 
 运行：`run-20260903T141258Z`　共 16 条分歧
 
-> 预审意见由 Claude 给出，**不等于人工抽检结果**。
+> 预审意见只是建议，**不等于人工抽检结果**。
 > 请逐条确认或推翻，并把结论填进 `audit_sheet.csv` 的 `human_verdict` 列。
 
 ---
@@ -70,7 +70,7 @@ Hence, the solution is \(f(n) = n\) for all positive integers \(n\). This functi
 
 Concludes f(n)=n is THE solution without proving uniqueness; only verifies it is A solution. 'Determine all functions' requires ruling out others; uniqueness unproven.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**criterion_gap**　置信度：medium
 - 理由：题目要求「determine all functions」。第 8 步自述「plausible that this linear function might be the only solution」，第 9 步即断言「Hence, the solution is f(n)=n」—— 由「可能」跳到「就是」，唯一性未证。按本项目判定标准这构成 E5 跳步 / E9（结论未被论证支撑）；但 ProcessBench 标注的是「步骤内是否存在错误」，并不标注「论证不完整」。双方都不算错，是判定准则不同。
@@ -148,7 +148,7 @@ The last digit of 245 is 5. Therefore, the last digit of the sum \(T^2 + (2T)^2 
 
 False period-9 claim: (49k)^2 mod10 = k^2 mod10 has period 10 (residue 0 at k=10). Also miscounts terms as 49 vs true T^2=2401; correct last digit = 1, not 5.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_right**　置信度：high
 - 理由：已独立复算。项数 49 正确（末项 (T^2)^2 = (T·T)^2，故 k 取 1..49）。但第 3 步称末位数字「每 9 项一循环」是实质错误：(49k)^2 mod 10 的真实周期为 10，序列为 [1,4,9,6,5,6,9,4,1,0]。据此真实末位之和为 225，题解算得 245 —— 二者恰好同末位 5，最终答案才「对」。这是教科书级 E9（答案正确但过程不成立，且正确性来自数值巧合），标注为「过程无误」是漏标。注：评估器的证据里称正确答案为 1，那是把项数误当作 T^2=2401 所致，证据部分有误但核心结论成立。
@@ -198,7 +198,7 @@ Therefore, Morgan can invite 3 friends to her birthday party.
 
 Step 3 claims '$90 / $30 per person = 3 people' is the number of people she can invite, dropping the stated condition that 'she and her friends all get to play' - Morgan is herself one of the paying participants. The 3 covers Morgan plus invitees, so she can invite only 3 - 1 = 2 friends, not 3.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：medium
 - 理由：第 3 步算出 90/30 = 3，这个 3 作为「参与总人数」是正确的；错在第 4 步把它当成「可邀请的朋友数」（Morgan 本人也占一份，应为 2 位朋友）。评估器指向第 3 步，理由是该步措辞已写成「how many people she can invite」—— 措辞确有歧义，但数值无误。属边界情形，落在 ±1 容忍内。
@@ -261,7 +261,7 @@ So, each pump of shampoo costs \(\boxed{40}\) cents.
 
 Step 3 claims the bottle gives '60 pumps for 60 washings'. The directions (2 pumps per wash, 120 washings) mean the bottle holds 2 x 120 = 240 pumps, so at 1 pump per wash it yields 240 washings. The pumps-per-wash x washings = total-pumps relation is misapplied, so cost per pump is 2400/240 = 10 cents, not the claimed 40 cents.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：high
 - 理由：第 2 步「120 washings with 2 pumps，therefore 120/2 = 60 pumps per washing」把关系整个倒置了：2 泵/次 × 120 次说明整瓶含 240 泵，而 120/2=60 既非泵数也非每次泵数。这是首个实质错误。评估器指向第 3 步（60 泵对应 60 次），第 3 步只是沿用了第 2 步的错误结论。标注正确，评估器晚了一步。
@@ -326,7 +326,7 @@ Now that we know the measures of two of the angles in triangle DBE (angle BED = 
 
 Step3 claims angle DBE=90 (right-triangle misuse); actually 15 trisection; correct angle BDE=105.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：high
 - 理由：第 1 步称「angle C is also 90 degrees」—— 等腰直角三角形直角在 A，则 B、C 各为 45°，不可能有两个直角。这是明显的首个错误。评估器指向第 3 步（∠DBE=90），那已是被第 1 步污染后的下游错误。标注正确，评估器晚了 2 步 —— 本条超出 ±1 容忍。
@@ -383,7 +383,7 @@ Thus, the measure of angle \( x \) is \(\boxed{140}\).
 
 Step4 misapplies exterior-angle theorem (uses adjacent ∠ACB); x is exterior at B=140, reasoning flawed
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：medium
 - 理由：第 3 步断言「x 是 △ABC 在顶点 C 处的外角」。按评估器自己的分析，x 实为顶点 B 处的外角。若如此，第 3 步的顶点认定即为首错，第 4 步只是代入该错误前提得数。标注正确，评估器晚了一步。
@@ -498,7 +498,7 @@ The direct numerical simplification requires deeper insight into the specific pr
 
 Step11: (2*sqrt2023)^2=4*2023=8092, not 8*2023=16184; denom cube_root(-8084) != cube_root(8).
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_right**　置信度：medium
 - 理由：已用 SymPy 核验第 9 步：两根为 90±34√7，34√7 = 2√2023，两根之积为 8，故第 9 步的分母 cbrt(90^2-(2√2023)^2) = cbrt(8) = 2，分子 r1·cbrt(r1)+r2·cbrt(r2) 的通分结构亦正确 —— 第 9 步没有错。真错在第 11 步：(2√2023)^2 = 4×2023 = 8092，题解写成 8×2023 = 16184。评估器定位正确，标注偏早 2 步。
@@ -568,7 +568,7 @@ The final answer is: \(\boxed{81}\).
 
 Answer 81 correct, but Case2 (b+c=-1) has 40 pairs (b in [-20,19]) not 41; Step7 subtracts non-integer overlap b=c=-1/2 that does not exist. Two errors cancel to 81.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_right**　置信度：high
 - 理由：已用枚举独立核验：b+c=-1 且 -20<=b,c<=20 的整数对恰为 40 个（c 取 -20..19），第 6 步声称 41 个是边界少算，属实质错误。第 7 步又扣掉根本不存在的整数重叠 b=c=-1/2。两处错误恰好抵消，最终答案 81 才对。首错在第 6 步，评估器正确，标注（第 7 步）晚了一步 —— 且本条同时是 E9。
@@ -634,7 +634,7 @@ The smallest possible sum of the two estimates, given the constraints, is \(\box
 
 Integer-estimate condition omitted; min sum is 20 (ceil(0.8x)+ceil(0.8y)), not 19.2.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：medium
 - 理由：第 2 步以「让两个估计尽量接近」来最小化和，忽略了估计必须为整数的条件，因而得出 19.2 这种非整数下界。评估器指向第 1 步，但第 1 步似已陈述该整数约束（原文在此处被截断）。若第 1 步陈述完整，则首错在第 2 步，标注正确。
@@ -688,7 +688,7 @@ Therefore, the number of fairies remaining is \(\boxed{45}\).
 
 'Half as many fairies as Katelyn saw' is correctly read as 50/2 = 25 joining, giving 50 + 25 = 75, then 75 - 30 = 45 after the departures. All problem conditions (initial 50, joiners, 30 leaving) are used exactly once; final answer 45 is correct.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_right**　置信度：high
 - 理由：解答从头到尾正确：50 + 50/2 = 75，75 - 30 = 45，答案 45 即 GSM8K 标准答案。标注却把第 2 步记为首错并将样本归入 E9。已独立复算，第 2 步的 50/2=25 与 50+25=75 均无误。判定为 ProcessBench 标注错误，评估器判「过程无误」正确。
@@ -745,7 +745,7 @@ The probability that both pilots get the fish is the ratio of the number of favo
 
 P(both pilots fish)=C(3,2)/C(6,2)=3/15=1/5, correct and sound.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：high
 - 理由：第 4 步称「总的可能分配数 = 3 × C(4,4) = 3」。3 份牛排 + 3 份鱼分给 6 名机组人员，总分配数应为 C(6,3) = 20。该步把「为飞行员选鱼餐的方式数」当成了全体样本空间，概率分母因此错误。这是实质错误，标注正确，评估器漏报。
@@ -803,7 +803,7 @@ The smallest positive integer value for \(k\) is 1, so \(c = 3\), \(d = 9\), and
 
 Min a+b+c+d from |a-b|=2k²,c=3k gives 4+12=16; step6 a,b slip harmless
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：medium
 - 理由：第 1 步以「竖直距离 |d-c|」作为平行四边形的边长依据。由 y=ax+c、y=ax+d、y=bx+c、y=bx+d 围成的平行四边形面积为 (d-c)^2/|a-b|，用竖直距离相乘会得到错误面积。标注正确，评估器漏报。
@@ -864,7 +864,7 @@ Since we're looking for real values of $x$, we can ignore the complex part. Ther
 
 x⁴+4x²=(x²+2)²-4<21 ⇒ x²<3; lower bound vacuous; (-√3,√3) correct
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：high
 - 理由：第 5 步由 x^2 > -7 推出「x > sqrt(-7)，即 x > i·sqrt(7)，x < -i·sqrt(7)」。求解实数不等式时引入虚数界毫无意义；x^2 > -7 对一切实数恒成立，本应直接判为恒真。属明显的概念误用（E2），标注正确，评估器漏报。
@@ -940,7 +940,7 @@ Thus, the length of the rope is \(\boxed{28}\).
 
 Two straight segments (0,15)-(5,3)=13 and (5,3)-(14,15)=15; total=28 m. Standard valid interpretation.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：medium
 - 理由：绳子实为两段直线（各自连接杆顶与 Paul 站立点），长度 = sqrt(5^2+12^2) + sqrt(9^2+12^2) = 13 + 15 = 28。第 3 步称「绳子不完全直，需在两段之外再加上下垂量」，属概念错误 —— 松弛绳的形状已由两个端点与站立点唯一确定，不存在额外下垂量。标注正确，评估器漏报。
@@ -1051,7 +1051,7 @@ Thus, the real values of \(x\) that satisfy the equation are \(\boxed{-\frac{3}{
 
 Solution set {-3/2,-1,0} verified: each satisfies the log equation and domain (bases/args >0, !=1); algebraic derivation correct.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**evaluator_wrong**　置信度：high
 - 理由：第 10 步以「5x+9 = 3/2，小于 1」为由排除 x = -3/2。但 3/2 = 1.5 > 1，理由本身是事实错误。排除该根即便结论正确，依据也不成立。标注正确，评估器漏报。
@@ -1115,7 +1115,7 @@ However, the maximum number of distinct points \(X_i\) that can satisfy the cond
 
 Asserts max 4 via rigid transformations; plausible for generic A,B,C,D, no provable error.
 
-### 预审意见（Claude，非人工抽检结果）
+### 预审意见（非人工抽检结果）
 
 - 结论：**needs_human**　置信度：low
 - 理由：数据集中的题干不完整 —— 未给出 A、B、C、D 的位置关系，无法判定「恰好四个位置」是否成立。第 5 步以枚举「直接对应 / 反射 / 旋转」的方式论证，缺少完备性证明，但在题干缺失的情况下无法确定标注所指的错误。

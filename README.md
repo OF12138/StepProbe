@@ -1,408 +1,210 @@
-# StepProbe · 步验
+# StepProbe（步验）
 
-> **面向可验证场景的过程评估与错误定位系统**
-> 基于 WorkBuddy + Hy3 · Process-level evaluation and error localization for verifiable reasoning
+数学推理的过程评估与错误定位工具，运行在 WorkBuddy 中，模型能力由 Hy3 提供。
 
----
+> 本项目是「犀牛鸟开源 · 混元大语言模型项目实战任务」的个人参赛作品，与腾讯官方无关，不是腾讯发布的产品或工具。项目只通过 WorkBuddy 调用 Hy3，不涉及模型训练或微调。
 
-## ⚠️ 声明
+演示视频：[demo.mp4](demo.mp4)（1 分 51 秒）
 
-**本项目为个人参赛作品**，属于「犀牛鸟开源 - 混元大语言模型项目」实战任务的个人 / 活动提交，**与腾讯官方无关，并非腾讯官方发布的产品或工具**。
+## 做什么
 
-项目通过 **WorkBuddy 内的 Hy3 模型**调用大模型能力，**不涉及任何模型训练或微调**。
+给定一道数学题和一条解题过程，StepProbe 判断这条推理链是否成立，找出第一个出错的步骤，给出错误类型，并识别「答案对、过程不成立」的情况。
 
----
+只看最终答案会高估模型的推理能力。在 ProcessBench 全部 3400 条解答上统计，答案正确但过程有误的比例随难度明显上升：
 
-## 1. 项目简介
+| 难度层 | 题源 | 答案对但过程错 |
+|---|---|---|
+| T1 | GSM8K | 1.75% |
+| T2 | MATH | 9.40% |
+| T3 | OlympiadBench | 16.10% |
+| T4 | Omni-MATH | 25.90% |
 
-大模型在数学推理上"答对"越来越容易，但"答得对不对得住"却很少被检验。同一个正确答案，背后可能是一条严谨的推导链，也可能是猜选项、数值巧合、或误用定理却恰好抵消。
+到了 Omni-MATH 这一层，大约每四个「答对」里就有一个推导站不住。
 
-**StepProbe 做两件事：**
+## 主要结果
 
-1. **应用侧** —— 在 WorkBuddy 中用 Hy3 解数学题，输出**结构化的完整解题过程**，而非仅有最终答案。
-2. **评估侧** —— 构建一套过程评估器，判断推理链是否成立、**定位首个出错步骤**、**归类错误类型**，并识别**「答案正确但过程不成立」**的样本。
+**L1 符号校验**（447 条样本，共 3172 步）：触发率 6.0%，触发时误报率 3.7%（1/27）。
 
-核心约束：**评估器本身必须先被证明可靠**，它对 Hy3 的评判才有意义。因此实验拆为两段 —— 先用带人工标注的公开数据验证评估器，再用验证过的评估器去评测 Hy3。
+**完整评估器**（60 条样本，盲评后与 ProcessBench 专家标注对照）：
 
----
+| 指标 | 按原标注计算 | 人工抽检修正后 |
+|---|---|---|
+| 检出率 | 0.806 | 0.857 |
+| 首错步精确定位 | 0.611 | 0.714 |
+| 首错步 ±1 定位 | 0.750 | 0.829 |
+| 误报率 | 0.083（2/24） | 0.000（0/23） |
+| E9 召回 | 0.533 | 0.643 |
 
-## 2. 为什么做过程评估
+评估器与原标注不一致的 16 条样本经过人工逐条复核：10 条是评估器判错，4 条是原标注有误，2 条属于判定口径不同。右列按复核结论重算，两套数字都保留在报告里。误报率 0/23 的 95% 置信区间上界为 0.143。
 
-| 只看最终答案 | 看推理过程 |
+两轮独立盲评的一致率：「是否有错」为 0.933，「错在哪一步、属于哪一类」为 0.667。
+
+**Max Mode 消融**（160 道题，开、关两种设置下同题配对）：答案正确率 0.981 对 0.961，McNemar 检验 p = 0.250；两组过程成立率都是 1.000。在这批题目上没有测出差异，主要原因是题目集偏易，分析见报告 §6。
+
+完整分析见 [docs/report.md](docs/report.md)。
+
+## 工作原理
+
+评估分四层，前两层不调用模型：
+
+- **L0 步骤切分**：把解答切成编号步骤。
+- **L1 符号校验**：用 SymPy 检查步骤里的等式，结果分为成立、不成立、无法判定三种。
+- **L2 分步审查**：Hy3 只审 L1 无法判定的步骤，看定理用法是否正确、有没有跳步。
+- **L3 全局复核**：Hy3 检查循环论证、条件遗漏和「答案对、过程错」。前面各层全部通过时也会执行。
+
+等式成不成立交给 SymPy 计算，模型只处理需要语义理解的部分。这样做一方面避免评估器自己算错，另一方面减少了模型调用轮次。L1 在第 k 步发现错误时直接停止逐步审查，只保留 L3。
+
+```
+WorkBuddy（Hy3）
+├─ Skills    /solve  /evaluate  /validate  /ablate
+├─ L2 分步审查    只审 L1 无法判定的步骤
+└─ L3 全局复核    循环论证、条件遗漏、答案对过程错
+        │
+        │ MCP
+        ▼
+StepProbe MCP Server（Python，不调用模型）
+├─ L0 步骤切分    solution_segment
+├─ L1 符号校验    check_step_symbolic  check_answer  check_format
+└─ 数据与结果      dataset_next_batch  verdict_record  metrics_compute
+                   report_export  p6_next_batch  p6_record
+
+解答 ─ L0 ─ steps ─ L1 ─┬─ 无法判定的步骤 ─ L2 ─┐
+                        └───────────────────────┴─ L3 ─ 评判结果（含证据）
+```
+
+MCP Server 提供 10 个工具。评判落盘时，判定为「有误」的结果必须附带 `evidence`，指明具体哪个论断不成立，否则工具拒绝写入。
+
+四个 Skill 的分工：
+
+| Skill | 用途 |
 |---|---|
-| 选择题猜对 = 满分 | 能识别"蒙对" |
-| 两个符号错误互相抵消 = 满分 | 能定位到第一个符号错误 |
-| 跳过关键论证直接给结论 = 满分 | 能标记为跳步推导 |
-| 无法回答"模型哪里不行" | 给出错误类型分布与能力边界 |
+| `/solve` | 让 Hy3 输出结构化的分步解答 |
+| `/evaluate` | 对一条推理链执行 L0–L3 评估 |
+| `/validate` | 在带标注的数据上批量验证评估器 |
+| `/ablate` | Max Mode 开关的同题配对实验 |
 
-**目标用户**：需要把大模型接入教育测评、自动批改、推理能力诊断的开发者与研究者。
+## 错误分类
 
-**待解决问题**：在有标准答案的可验证领域，如何低成本、可复现地判断"过程质量"，而不是只统计 pass@1。
-
-**引入大模型的必要性**：步骤是否"跳步"、定理前提是否成立、论证是否循环 —— 这些判断依赖自然语言语义理解，规则引擎无法覆盖；但同时又存在大量可被符号计算确定判定的部分。本项目的价值正在于把两者切开（见 §3）。
-
----
-
-## 3. 系统架构
-
-WorkBuddy 是可执行本地任务的 Agent 工作站，支持通过 **MCP Server** 接入自定义工具，并支持 **Skills** 扩展。StepProbe 因此不是"调用大模型 API 的脚本"，而是**一组挂载到 WorkBuddy 上的确定性工具 + 一套评估 Skill**，由 WorkBuddy 中的 Hy3 驱动整个评测流程。
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                      WorkBuddy (Agent 运行时)                     │
-│                        模型能力：Hy3                              │
-│                                                                  │
-│   Skills:  /solve   /evaluate   /validate   /ablate              │
-│      │                                                           │
-│      │   推理层 —— 交给 Hy3，需要语义理解的部分                    │
-│      │                                                           │
-│      │    L2  分步审查                                           │
-│      │        只审 L1 判不了的步骤：定理是否适用、是否跳步          │
-│      │                                                           │
-│      │    L3  全局复核                                            │
-│      │        循环论证 / 条件遗漏 / 「答案对但过程不成立」(E9)      │
-│      │        —— 前面全过也必须执行                                │
-│      │                                                           │
-└──────┼───────────────────────────────────────────────────────────┘
-       │
-┌──────▼───────────────────────────────────────────────────────────┐
-│           StepProbe MCP Server（纯 Python，零 LLM 调用）           │
-│                                                                  │
-│   确定性层 —— 不会「看走眼」，且成本为零                           │
-│                                                                  │
-│    L0  步骤切分                                                  │
-│        solution_segment()      把整段解答切成带编号的 steps[]      │
-│                                                                  │
-│    L1  确定性校验（SymPy）                                        │
-│        check_step_symbolic()   抽取步骤内等式，逐条符号/数值判定    │
-│                                → TRUE / FALSE / UNKNOWN          │
-│                                  UNKNOWN 的才往上交给 L2          │
-│        check_answer()          最终答案三级等价校验                │
-│        check_format()          答案格式校验（E8）                  │
-│                                                                  │
-│    数据与结果（不属于评估层，是流程支撑）                          │
-│        dataset_next_batch()    取分层样本，剥离标注后下发          │
-│        verdict_record()        评判落盘，判错必须带 evidence       │
-│        metrics_compute()       定位准确率 / 误报率 / 分层统计      │
-│        report_export()         结果表格导出                       │
-│        p6_next_batch()         取 P6 消融题目（不含标准答案）      │
-│        p6_record()             落盘一条解答                       │
-└──────────────────────────────────────────────────────────────────┘
-
-数据流：  原始解答 ──L0──▶ steps[] ──L1──▶ 判不了的步骤 ──L2──▶ 逐步结论
-                                    │                          │
-                                    └──────────▶ L3 全局复核 ◀──┘
-                                                     │
-                                                     ▼
-                                            verdict（含 evidence）
-```
-
-### 设计依据：为什么这样切分
-
-**把能确定性判定的事情从 LLM 手里拿走。** 纯 LLM-as-judge 有个根本弱点 —— 评估器自己也会算错。`2x+3=7 ⟹ x=2` 这类判断应该由 SymPy 给出，而不是由另一个大模型"觉得"它对不对。因此：
-
-- **能被符号计算判定的 → MCP 工具**（计算错误、答案校验、格式校验）：确定、免费、可复现
-- **需要语义理解的 → Hy3**（定理是否适用、是否跳步、是否循环论证）：LLM 不可替代
-- **先跑确定性层，再跑推理层**：大量计算类错误在 L1 即被拦下，显著减少昂贵的模型调用轮次
-
-这一切分同时缓解了 WorkBuddy 无批量 API 带来的吞吐问题（见 §10）。
-
-评估方法的完整设计与提示词见 [`docs/method.md`](docs/method.md)。
-
----
-
-## 4. 错误分类体系
-
-| 编号 | 错误类型 | 判定依据（可操作） | 主判定层 |
+| 编号 | 类型 | 判定依据 | 判定层 |
 |---|---|---|---|
 | E1 | 题意误读 | 解答求解的目标与题干所问不一致 | L3 |
 | E2 | 概念 / 定理误用 | 引用定理的前提在本题不成立 | L2 |
-| E3 | 计算错误 | 该步等式经符号或数值校验不成立 | **L1（确定性）** |
-| E4 | 条件遗漏 | 题干给定条件未被使用，且该条件影响结果 | L3 |
-| E5 | 跳步推导 | 相邻步骤间缺少必要中间推导，无法由前推出后 | L2 |
-| E6 | 循环论证 | 该步的论证依赖了待证结论本身 | L3 |
-| E7 | 幻觉引用 | 引用了不存在的定理 / 公式 / 已知量 | L2 |
-| E8 | 格式不符 | 最终答案形式不满足题目要求 | **L1（确定性）** |
-| E9 | **答案正确但过程不成立** | 最终答案校验通过，但存在 E1–E7 之一 | L3 |
+| E3 | 计算错误 | 该步等式经符号或数值校验不成立 | L1 |
+| E4 | 条件遗漏 | 题干条件未被使用，且影响结果 | L3 |
+| E5 | 跳步推导 | 相邻步骤之间缺少必要推导 | L2 |
+| E6 | 循环论证 | 论证依赖了待证结论本身 | L3 |
+| E7 | 幻觉引用 | 引用了不存在的定理、公式或已知量 | L2 |
+| E8 | 格式不符 | 最终答案形式不满足题目要求 | L1 |
+| E9 | 答案对但过程不成立 | 答案校验通过，但存在 E1–E7 之一 | L3 |
 
-完整判定标准（含正例 / 反例）见 [`configs/taxonomy.yaml`](configs/taxonomy.yaml)。
+判定只针对步骤内的实质错误。「未证唯一性」「论证不完整」这类问题不计入过程错误。完整标准和正反例见 [configs/taxonomy.yaml](configs/taxonomy.yaml)。
 
-> 本体系覆盖任务书点名的错误类型（题意误读、概念理解错误、计算错误、条件遗漏、跳步推导、格式不符），并可与 PRMBench 的九类标注维度做映射，从而直接用公开人工标注验证分类一致性。
+## 快速开始
 
----
+需要 WorkBuddy 桌面端（开发时使用 v5.3.14）并能使用 Hy3，以及 Python 3.10 或更高版本。不需要任何模型 API Key。
 
-## 5. 评测数据
-
-**题目与过程标注均取自公开数据集，不做大规模自行人工标注。**
-
-| 数据集 | 用途 | 提供的标注 |
-|---|---|---|
-| **ProcessBench** | 评估器有效性验证（主） | 人工专家标注的**最早出错步骤**；含"全部步骤正确"样本，用于误报率测量 |
-| **PRMBench** | 错误类型一致性验证 | 步骤级标注 + 显式错误类型维度 |
-| **DeltaBench** | 跨域泛化验证（次） | 长 CoT 分段标注：首个出错步号 + 解释 + 修正 |
-| **自建中文子集** | 评测执行 | 中文高考 / 竞赛题，标准答案可自动校验 |
-
-### 难度分层与分层依据
-
-ProcessBench 的题目来源本身构成一条难度阶梯，直接作为分层依据：
-
-| 层级 | 来源 | 说明 |
-|---|---|---|
-| T1 基础 | GSM8K | 小学应用题，2–8 步算术推理 |
-| T2 中等 | MATH | 高中竞赛题，含代数 / 几何 / 数论 |
-| T3 困难 | OlympiadBench | 奥赛级别 |
-| T4 极难 | Omni-MATH | 高难度竞赛题集 |
-
-样本来源、构造方式、分层依据与抽样方案详见 [`docs/dataset.md`](docs/dataset.md)。
-
----
-
-## 6. 有效性验证方案
-
-评估器在用于评测 Hy3 之前，先在带人工标注的数据上证明可靠。
-
-### 6.1 定位准确率（在答案错误的样本上）
-
-- `Detection Rate` —— 判定"过程存在问题"的比例
-- `Exact Localization Acc` —— 定位步号与标注完全一致
-- `Tolerant Localization Acc (±1)` —— 允许 ±1 步偏差（步骤切分粒度差异所致）
-
-### 6.2 误报率（在答案正确且标注为过程无误的样本上）
-
-- `False Positive Rate`
-- **人工抽检**：对 ≥50 条误报样本逐条人工复核，区分**真实问题**（原标注漏标，评估器其实是对的）与**真误报**，记录留存于 `results/human_audit/`
-
-### 6.3 错误类型一致性
-
-映射到 PRMBench 标注维度后，计算 Accuracy / Macro-F1 / 混淆矩阵。
-
-### 6.4 稳定性（附加）
-
-同一条推理链重复评估 5 次，统计首个错误步号的众数占比与错误类型的一致率，用以说明评估结论不是随机波动的产物。
-
----
-
-## 7. 评测执行与结果分析
-
-用验证后的评估器对 Hy3 生成的解题过程做一次完整评测，输出：
-
-- **最终答案准确率 × 过程正确率**的交叉分布，重点关注**「答案对但过程错」象限**的占比
-- **错误类型分布**
-- **难度分层结果**，指出模型表现开始明显下降的难度区间
-- **典型 case 归因分析**
-- **Max Mode 消融**：WorkBuddy 提供 Max Mode 开关。分别在**开启 / 关闭** Max Mode 下跑同一批题目，比较最终答案准确率与**过程正确率**的变化 —— 检验更强的推理配置究竟是提升了推导严谨性，还是只是把答案蒙得更准。这是本项目唯一可控的模型侧变量，作为独立一节分析。
-
----
-
-## 8. 环境要求
-
-- **WorkBuddy 桌面端**（开发时版本 v5.3.14），已登录且可使用 **Hy3** 模型
-- **Python ≥ 3.10**（运行 StepProbe MCP Server）
-- 依赖见 [`requirements.txt`](requirements.txt)
-
-> **无需任何大模型 API Key。** 模型能力全部经由 WorkBuddy 调用，本项目不持有、不存储、不传输任何模型密钥。
-
----
-
-## 9. 快速开始
-
-### 9.1 安装
+**1. 安装**
 
 ```bash
 git clone https://github.com/OF12138/StepProbe.git
 cd StepProbe
-pip install -e .          # 以包方式安装，MCP Server 才能从任意工作目录启动
-pip install mcp           # MCP 依赖（可选：仅接入 WorkBuddy 时需要）
+pip install -e ".[mcp,dev]"
 ```
 
-> 必须用 `pip install -e .` 而非只装 `requirements.txt`。WorkBuddy 启动 MCP Server
-> 时的工作目录不确定，装成包才能保证 `python -m stepprobe.mcp_server` 在任何目录下都能跑起来。
+要以包的形式安装。WorkBuddy 启动 MCP Server 时工作目录不固定，装成包之后 `python -m stepprobe.mcp_server` 在任何目录下都能运行。
 
-### 9.2 拉取并规整评测数据
+**2. 准备数据**
 
 ```bash
-cp .env.example .env      # 按需修改路径配置
+cp .env.example .env
 python -m stepprobe.data.build --config configs/default.yaml
 ```
 
-### 9.3 注册 MCP Server 到 WorkBuddy
+数据会写入 `data/`，不入库。国内网络可以在 `.env` 里设置 `HF_ENDPOINT` 使用镜像。
 
-编辑配置文件（二选一）：
+**3. 在 WorkBuddy 中注册 MCP Server**
 
-- **用户级**（跨项目复用）：`~/.workbuddy/mcp.json`
-  Windows 为 `%USERPROFILE%\.workbuddy\mcp.json`
-- **项目级**（仅当前项目生效）：`<项目目录>/.workbuddy/mcp.json`
+把 `.workbuddy/mcp.json.example` 复制为项目目录下的 `.workbuddy/mcp.json`（或用户目录下的 `~/.workbuddy/mcp.json`），将其中两个路径改成本机的绝对路径。然后在 WorkBuddy 侧边栏「插件」→「MCP 服务器」→「配置 MCP」中加载，状态灯变绿即连接成功。
 
-```json
-{
-  "mcpServers": {
-    "stepprobe": {
-      "command": "python",
-      "args": ["-m", "stepprobe.mcp_server"],
-      "env": {
-        "STEPPROBE_DATA_DIR": "F:/Code/HYLLM/stepprobe/data",
-        "STEPPROBE_RESULTS_DIR": "F:/Code/HYLLM/stepprobe/results"
-      }
-    }
-  }
-}
-```
+路径需要写绝对路径，写成 `./data` 会因为工作目录不确定而找不到数据。
 
-> **路径必须写绝对路径。** WorkBuddy 启动 MCP Server 时的工作目录不确定，
-> 写 `./data` 会导致找不到数据文件而报错。仓库里 `.workbuddy/mcp.json.example`
-> 是模板，改成你自己的绝对路径后使用。
+**4. 导入 Skills**
 
-在 WorkBuddy 中：**侧边栏「插件」→ 右上角「MCP 服务器」→「配置 MCP」**，粘贴上述配置。
+把本仓库选为 WorkBuddy 的 workspace，`skills/` 下的四个 Skill 会被自动识别，也可以手动导入。之后在对话框里用 `/evaluate` 等命令调用。
 
-保存后查看状态指示灯：**🟢 绿色 = 连接成功**；🔴 红色 = 检查配置内容、命令环境或路径是否正确。
+**5. 运行**
 
-> 配置格式请以你所用 WorkBuddy 版本的官方文档为准，不同版本字段可能有差异。
->
-> **密钥管理**：所有配置通过环境变量或 `.env` 传入，仓库仅提供 `.env.example`，`.env` 已在 `.gitignore` 中忽略，**不硬编码任何密钥**。
+评估单条推理链：在 WorkBuddy 中输入 `/evaluate`，附上题目和解题步骤。
 
-### 9.4 安装 Skills
-
-将 [`skills/`](skills/) 下的 `solve` / `evaluate` / `validate` / `ablate` 导入 WorkBuddy，
-随后在对话框中以 `/` 调用。选定本仓库为 workspace 时 WorkBuddy 会自动识别项目层级 Skills。
-
-### 9.5 运行
-
-**第一步：验证评估器本身（P5）**
-
-```
-/validate --n 60
-    → 在人工标注数据上验证评估器，产出定位准确率、误报率、E9 召回与稳定性
-```
-
-**第二步：人工抽检（P7，不可跳过）**
+验证评估器并做人工抽检：
 
 ```bash
-python scripts/pre_audit.py --run <run_id>       # 生成判断包，把「逐条分析」降为「逐条确认」
-# 人工填写 results/runs/<run_id>/audit_sheet.csv 的 human_verdict 列
-python scripts/apply_audit.py --run <run_id>     # 应用人工结论，重算修正后指标
+# 在 WorkBuddy 中执行 /validate，得到 run_id 后：
+python scripts/pre_audit.py --run <run_id>     # 生成分歧样本的判断包和抽检表
+# 在 results/runs/<run_id>/audit_sheet.csv 的 human_verdict 列填写复核结论
+python scripts/apply_audit.py --run <run_id>   # 按复核结论重算指标
 ```
 
-**第三步：Max Mode 消融（P6）**
+Max Mode 消融：
 
 ```bash
-python scripts/build_p6_set.py                   # 构建 160 道题目集（含反推的标准答案）
+python scripts/build_p6_set.py                 # 构建 160 道题的题目集
+# 在 WorkBuddy 中执行 /ablate，完成后：
+python scripts/p6_check.py --run <run_id>      # 检查进度与数据格式
+python scripts/p6_score.py --run <run_id>      # 配对评分与 McNemar 检验
 ```
 
-```
-/ablate     → 依次在 Max Mode 关 / 开两种设置下解同一批题，再逐条评估
-```
+单独评测 L1：`python scripts/eval_l1.py`。运行测试：`pytest`（191 项）。
 
-```bash
-python scripts/p6_check.py --run <run_id>        # 中途体检：进度 + 格式，防止评判归错臂
-python scripts/p6_score.py --run <run_id>        # 同题配对对比 + McNemar 检验
-```
+WorkBuddy 没有批量推理接口，评测需要在对话中分批发起，每批 20 到 40 条。中断后用同一个 `run_id` 续跑即可，已处理的条目会被跳过。各阶段可直接粘贴的提示词见 [docs/runbook.md](docs/runbook.md)。
 
-结果写入 `results/runs/<run_id>/`。
-
----
-
-## 10. 已知约束：吞吐
-
-WorkBuddy 是交互式 Agent 工作站，**没有批量推理 API**，所有模型调用都发生在 Agent 轮次中。这是本项目最主要的工程约束，应对方式：
-
-1. **确定性层前置** —— 计算类错误由 SymPy 拦截，不消耗模型轮次
-2. **整链单次评审** —— 一次调用评审整条推理链并返回结构化 JSON，而非逐步骤各调用一次
-3. **分层抽样** —— ProcessBench 全量 3,400 条不全跑，按四个难度层**分层抽样约 400 条**，抽样方案与置信区间见 `docs/dataset.md`
-4. **利用 WorkBuddy 的并行多 Agent 执行**分担长任务
-
-评测规模因此以**分层抽样集**为准，报告中明确标注样本量与抽样方式，**不夸大覆盖范围**。
-
----
-
-## 11. 目录结构
+## 目录结构
 
 ```
-stepprobe/
-├── README.md  ·  LICENSE  ·  requirements.txt
-├── .env.example              # 配置样例（不含真实密钥）
-├── .workbuddy/mcp.json.example
+StepProbe/
+├── demo.mp4                  演示视频
 ├── configs/
-│   ├── default.yaml          # 数据、抽样与运行配置
-│   └── taxonomy.yaml         # 错误分类体系（含判定标准与判定口径）
+│   ├── default.yaml          数据、抽样与运行配置
+│   └── taxonomy.yaml         错误分类与判定口径
 ├── src/stepprobe/
-│   ├── mcp_server/
-│   │   ├── __main__.py       # MCP 工具注册（兼容 mcp 1.x / 2.x）
-│   │   ├── tools.py          # 10 个工具的纯函数实现
-│   │   └── store.py          # run_id 状态与落盘
-│   ├── checkers/
-│   │   ├── answer.py         # 最终答案三级校验 + 装饰剥离
-│   │   ├── symbolic.py       # 步骤等式符号与数值校验（L1）
-│   │   ├── latex.py          # LaTeX 归一化与可解析性判断
-│   │   └── segment.py        # 步骤切分
-│   ├── data/                 # ProcessBench / DeltaBench → 统一 schema
-│   ├── metrics/core.py       # 定位准确率、误报率、一致性、稳定性
-│   └── schema.py             # 统一数据模型（含标注剥离白名单）
-├── skills/                   # WorkBuddy Skills
-│   ├── solve/                # 应用侧：结构化解题
-│   ├── evaluate/             # L2 分步审查 + L3 全局复核
-│   ├── validate/             # 有效性验证流程编排
-│   └── ablate/               # Max Mode 消融实验
-├── scripts/
-│   ├── eval_l1.py            # L1 单独表现与误报诊断
-│   ├── pre_audit.py          # 人工抽检预审：生成判断包
-│   ├── apply_audit.py        # 应用人工结论并重算指标
-│   ├── audit_corrections.json
-│   ├── build_p6_set.py       # 反推标准答案，构建 P6 题目集
-│   ├── p6_check.py          # P6 运行体检：进度 + 格式
-│   └── p6_score.py           # Max Mode 同题配对评分
-├── tests/                    # 191 项
-├── data/                     # 规整后的评测数据（不入库）
-├── results/runs/<run_id>/    # 每次运行的批次、评判、指标、报告、抽检表
+│   ├── mcp_server/           MCP 工具注册、实现与结果存储
+│   ├── checkers/             答案校验、等式校验（L1）、LaTeX 规范化、步骤切分
+│   ├── data/                 ProcessBench / DeltaBench 加载与分层抽样
+│   ├── metrics/              定位准确率、误报率、一致性、稳定性
+│   └── schema.py             统一数据模型与标注剥离
+├── skills/                   solve / evaluate / validate / ablate
+├── scripts/                  L1 评测、人工抽检、P6 题目集构建与评分
+├── tests/
+├── results/runs/<run_id>/    每次运行的评判、指标、报告与抽检表
 └── docs/
-    ├── plan.md               # 实施计划与各阶段实测发现
-    ├── dataset.md            # 样本来源、分层依据、抽样方案
-    ├── method.md             # 评估方法、判定口径、指标定义
-    └── report.md             # 跨轮汇总分析报告
 ```
 
----
+## 文档
 
-## 12. 项目状态
-
-> **P1–P7 已完成，通过 191 项测试。** 仅剩 P8 录屏。实现细节与实测结果见 [`docs/plan.md`](docs/plan.md)，分析结论见 [`docs/report.md`](docs/report.md)。
-
-| 模块 | 状态 |
+| 文档 | 内容 |
 |---|---|
-| 方案设计与错误分类体系 | ✅ 已完成 |
-| 数据说明与抽样方案 | ✅ 已完成 |
-| 评估方法与提示词设计 | ✅ 已完成 |
-| 数据管线（P1） | ✅ 已完成 |
-| L1 确定性校验器（P2） | ✅ 已完成，实测误报率 3.7%（1/27） |
-| MCP Server（P3，10 个工具） | ✅ 已完成 |
-| solve / evaluate / validate / ablate Skills | ✅ 已完成 |
-| 有效性验证实验（P5） | ✅ n=60，检出率 0.857、误报率 0/23（人工抽检修正后） |
-| 人工抽检（P7） | ✅ 16 条分歧全部人工确认 |
-| Max Mode 消融（P6） | ✅ n=160 同题配对，**结论为 null**（p=0.250），归因见报告 §6 |
-| 分析报告 | ✅ 已完成 |
-| Demo（P8） | 🟡 分镜脚本已就绪（`docs/demo.md`），待录屏 |
+| [report.md](docs/report.md) | 分析报告：验证结果、人工抽检、Max Mode 消融、局限 |
+| [method.md](docs/method.md) | 评估方法、提示词设计、判定口径、指标定义 |
+| [dataset.md](docs/dataset.md) | 数据来源、难度分层、抽样方案 |
+| [plan.md](docs/plan.md) | 各阶段的实施记录 |
+| [runbook.md](docs/runbook.md) | WorkBuddy 中的分批操作提示词 |
+| [demo.md](docs/demo.md) | 演示视频脚本 |
 
-**目前的主要结论**
+## 局限
 
-- **题目越难，「答案对但推理站不住」的比例越高**：E9 占比从 T1 的 1.75% 升到 T4 的 25.90%（全量 3400 条实测）。只统计最终答案准确率，在难题上会系统性高估模型能力。
-- 评估器在人工标注数据上检出率 0.857、±1 步定位 0.829、误报率 0/23（CI 上界 0.143）。
-- **ProcessBench 的人工标注本身并非无误**：16 条分歧中 4 条经人工确认为标注问题，不做人工抽检就会把这些记在评估器账上。
-- **Max Mode 消融测不出差别**（n=160 同题配对，答案正确率 0.981 vs 0.961，p=0.250；过程维度零方差）。这是一个诚实的 null 结果 —— 报告 §6.3 给出了完整归因：题目集偏易、判定口径与实验目标错配、评估器有已证实的漏报。
-- **真实数据里的风格差异是单测的盲区。** 两臂对比的 10 条差异里有 7 条是写法不同而非答案不同，由此查出六个答案归一化 bug（报告 §6.5）。单测里的答案都是自己写的、风格一致，只有让两个独立来源各写各的才暴露得出来。
+- 完整评估器只在 60 条样本上验证过，置信区间较宽。
+- 判定口径只覆盖步骤内的实质错误，「每一步都对但整体论证有缺口」不在覆盖范围内。
+- Max Mode 消融使用的题目集偏易，过程维度没有产生差异，需要更难且标准答案可靠的题目集重做。
 
----
+## 参考
 
-## 13. 参考
+- [WorkBuddy 文档](https://www.workbuddy.ai/docs/zh/workbuddy/)
+- [Hy3](https://github.com/Tencent-Hunyuan/Hy3)
+- [ProcessBench](https://arxiv.org/abs/2412.06559)
+- [DeltaBench](https://huggingface.co/datasets/OpenStellarTeam/DeltaBench)
 
-- WorkBuddy 官方文档 —— https://www.workbuddy.ai/docs/zh/workbuddy/
-- WorkBuddy MCP 指南 —— https://www.workbuddy.ai/docs/zh/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide
-- Hy3 —— https://github.com/Tencent-Hunyuan/Hy3
-- ProcessBench —— https://arxiv.org/abs/2412.06559
-- PRMBench —— https://arxiv.org/abs/2501.03124
-- DeltaBench —— https://huggingface.co/datasets/OpenStellarTeam/DeltaBench
-- BIG-Bench Mistake —— https://github.com/WHGTyen/BIG-Bench-Mistake
+数据集的使用遵循各自的原始许可，见 [docs/dataset.md](docs/dataset.md)。
 
-各数据集的使用均遵循其原始许可协议，详见 [`docs/dataset.md`](docs/dataset.md)。
+## 许可
 
-## License
-
-MIT
+[MIT](LICENSE)

@@ -143,7 +143,7 @@ python scripts/p6_check.py --run <RUN_ID>
 python scripts/p6_score.py --run <RUN_ID>
 ```
 
-产出 `p6_comparison.md`。把输出发我，我来写进报告。
+产出 `p6_comparison.md`，结论写入 `docs/report.md` §6。
 
 中途也可以跑，脚本会自己在报告开头标注「数据不完整、不可引用」并列出各 tier
 的评估覆盖度 —— 因为部分数据产出的报告和最终版格式完全一样，而评估按 tier
@@ -227,7 +227,7 @@ report_export(run_id="<RUN_ID>", kind="summary")
 report_export(run_id="<RUN_ID>", kind="human_audit")
 ```
 
-把 `metrics_compute` 的输出发我。之后走一次和上次一样的抽检流程：
+拿到 `metrics_compute` 的输出后，按同样的流程做人工抽检：
 
 ```bash
 python scripts/pre_audit.py --run <RUN_ID>     # 生成判断包
@@ -237,8 +237,8 @@ python scripts/apply_audit.py --run <RUN_ID>   # 重算修正后指标
 
 > 447 条的分歧数会比 60 条那轮多（按比例约 100+ 条）。**不必全审** ——
 > 任务书要求的是"抽检"。建议按分歧类型分层各抽 15–20 条，总量控制在 50 条以内，
-> 并在报告里写明抽检比例与抽样方式。告诉我你想抽多少，我改 `pre_audit.py`
-> 加一个分层抽样开关。
+> 并在报告里写明抽检比例与抽样方式。`pre_audit.py` 目前不带分层抽样，
+> 扩样时需要先补一个抽样参数。
 
 ---
 

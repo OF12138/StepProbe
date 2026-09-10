@@ -26,7 +26,7 @@ dist/
 Thumbs.db
 
 # WorkBuddy 本地配置（可能含密钥）
-.workbuddy/
+.workbuddy/*
 !.workbuddy/mcp.json.example
 
 # WorkBuddy agent 运行时产生的临时文件

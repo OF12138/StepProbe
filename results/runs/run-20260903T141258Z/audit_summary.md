@@ -1,12 +1,12 @@
 # 人工抽检结果
 
-运行：`run-20260903T141258Z`
+运行：`run-20260903T141258Z`　分歧 16 条，人工已判 16 条
 
 ## 预审 vs 人工
 
-- 确认预审意见：**140** 条
-- 推翻预审意见：**13** 条（processbench-math-math-912：evaluator_wrong → criterion_gap）
-- 预审无法定论、由人工独立判断：**10** 条（processbench-omnimath-omnimath-714 → evaluator_wrong）
+- 确认预审意见：**14** 条
+- 推翻预审意见：**1** 条（processbench-math-math-912：evaluator_wrong → criterion_gap）
+- 预审无法定论、由人工独立判断：**1** 条（processbench-omnimath-omnimath-714 → evaluator_wrong）
 
 ## 判定口径
 
